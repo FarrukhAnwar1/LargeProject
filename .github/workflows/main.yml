@@ -16,19 +16,19 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
-          node-version: 22.20.0
+          node-version: 24.10.0
 
       - name: Install frontend dependencies
         run: |
           cd frontend
-          npm install
+          npm ci
 
       - name: Install backend dependencies
         run: |
           cd backend
-          npm install
+          npm ci
 
   deploy:
     needs: build
@@ -48,12 +48,13 @@ jobs:
         run: |
           sshpass -p "${SSH_KEY}" ssh -o StrictHostKeyChecking=no ${SSH_USERNAME}@${SSH_HOST} << 'EOF'
           cd /var/www
-          git pull origin master
+          git fetch origin master
+          git reset --hard origin/master
           cd /var/www/frontend
-          npm install
+          npm ci
           npm run build
           sudo systemctl restart nginx
           cd /var/www/backend
-          npm install
+          npm ci
           pm2 restart express-server
           EOF
