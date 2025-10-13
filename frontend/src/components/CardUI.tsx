@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { buildPath } from './Path';
-import { retrieveToken, storeToken } from '../tokenStorage';
+import { retrieveToken, storeToken } from './tokenStorage';
 import axios from 'axios';
 function CardUI() {
     const [message, setMessage] = useState('');

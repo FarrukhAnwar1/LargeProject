@@ -19,3 +19,11 @@ export function retrieveToken(): string | null | undefined {
     }
     return ud;
 }
+export function deleteToken() {
+    try {
+        localStorage.removeItem('token_data');
+    }
+    catch (e) {
+        console.log(e);
+    }
+}
