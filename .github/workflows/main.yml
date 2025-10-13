@@ -56,5 +56,5 @@ jobs:
           sudo systemctl restart nginx
           cd /var/www/backend
           npm ci
-          pm2 restart express-server
+          pm2 restart express-server --update-env
           EOF
