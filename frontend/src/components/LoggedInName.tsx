@@ -1,4 +1,4 @@
-import { deleteToken } from "../tokenStorage";
+import { deleteToken } from "../TokenStorage";
 import { useNavigate } from 'react-router-dom';
 
 function LoggedInName() {
