@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 import { buildPath } from '../Path';
 import { storeToken } from '../TokenStorage';
-import { jwtDecode, type JwtPayload } from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-function Login() {
+import MD5 from 'crypto-js/md5';
+import { type TokenPayload } from '../Types';
+function LoginRegister() {
     const navigate = useNavigate();
     const [message, setMessage] = useState('');
     const [loginName, setLoginName] = React.useState('');
     const [loginPassword, setPassword] = React.useState('');
     async function doLogin(event: React.MouseEvent<HTMLInputElement>): Promise<void> {
         event.preventDefault();
-        const obj = { login: loginName, password: loginPassword };
+        const obj = { login: loginName, password: MD5(loginPassword).toString() };
         const js = JSON.stringify(obj);
         const config = {
             method: 'post',
@@ -38,15 +40,9 @@ function Login() {
 
             storeToken(res);
 
-            interface MyTokenPayload extends JwtPayload {
-                firstName: string;
-                lastName: string;
-                userId?: number;
-            }
-
-            let decoded: MyTokenPayload | null = null;
+            let decoded: TokenPayload | null = null;
             try {
-                decoded = jwtDecode<MyTokenPayload>(accessToken);
+                decoded = jwtDecode<TokenPayload>(accessToken);
             }
             catch (e) {
                 console.log(e);
@@ -63,10 +59,10 @@ function Login() {
                 setMessage('User/Password combination incorrect');
             }
             else {
-                const user = { firstName: firstName, lastName: lastName, id: userId }
+                const user = { firstName: firstName, lastName: lastName, userId: userId }
                 localStorage.setItem('user_data', JSON.stringify(user));
                 setMessage('');
-                navigate("/cards");
+                navigate("/cars");
             }
         }).catch(function (error) {
             console.log(error);
@@ -91,4 +87,4 @@ function Login() {
         </div>
     );
 };
-export default Login;
+export default LoginRegister;

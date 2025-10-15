@@ -1,6 +1,4 @@
-export interface TokenData {
-    accessToken: string;
-}
+import { type TokenData } from './Types.ts';
 export function storeToken(tok: TokenData) {
     try {
         localStorage.setItem('token_data', tok.accessToken);

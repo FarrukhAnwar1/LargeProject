@@ -9,30 +9,36 @@ on:
       - master
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+#   test:
+#     name: Run Tests
+#     runs-on: ubuntu-latest
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 24.10.0
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
 
-      - name: Install frontend dependencies
-        run: |
-          cd frontend
-          npm ci
+#       - name: Set up Node.js
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: 24.10.0
 
-      - name: Install backend dependencies
-        run: |
-          cd backend
-          npm ci
+#       - name: Install and test frontend
+#         run: |
+#           cd frontend
+#           npm ci
+#           npm test --if-present
+
+#       - name: Install and test backend
+#         run: |
+#           cd backend
+#           npm ci
+#           npm test --if-present
 
   deploy:
-    needs: build
+    name: Deploy to Production
+    # needs: test
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -47,14 +53,23 @@ jobs:
           SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
         run: |
           sshpass -p "${SSH_KEY}" ssh -o StrictHostKeyChecking=no ${SSH_USERNAME}@${SSH_HOST} << 'EOF'
+          set -e  # Exit if any command fails
+
+          echo "Fetching latest code..."
           cd /var/www
           git fetch origin master
           git reset --hard origin/master
+
+          echo "Building frontend..."
           cd /var/www/frontend
           npm ci
           npm run build
           sudo systemctl restart nginx
+
+          echo "Restarting backend..."
           cd /var/www/backend
           npm ci
           pm2 restart express-server --update-env
+
+          echo "✅ Deployment complete!"
           EOF

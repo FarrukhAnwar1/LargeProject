@@ -1,6 +1,12 @@
+import PageTitle from '../components/PageTitle.tsx';
+import LoginRegister from '../components/LoginRegister.tsx';
+
 const LoginRegisterPage = () => {
     return (
-        <div></div>
+        <div>
+            <PageTitle />
+            <LoginRegister />
+        </div>
     );
-}
+};
 export default LoginRegisterPage;

@@ -83,6 +83,7 @@ exports.setApp = function (app, client) {
         }
         var _search = search.trim();
         const results = await Card.find({
+            UserId: userId,
             "Card": {
                 $regex: _search + '.*',
                 $options: 'i'

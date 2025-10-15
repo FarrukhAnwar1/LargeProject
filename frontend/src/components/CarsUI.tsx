@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { buildPath } from '../Path';
 import { retrieveToken, storeToken } from '../TokenStorage';
 import axios from 'axios';
-function CardUI() {
+function CarsUI() {
     const [message, setMessage] = useState('');
     const [searchResults, setResults] = useState('');
     const [cardList, setCardList] = useState('');
@@ -34,6 +34,8 @@ function CardUI() {
             else {
                 setMessage('Card has been added');
                 storeToken(res.jwtToken);
+                setCardNameValue('');
+                (document.getElementById('cardText') as HTMLInputElement).value = '';
             }
         }).catch(function (error) {
             setMessage(error.toString());
@@ -93,4 +95,4 @@ function CardUI() {
         </div>
     );
 }
-export default CardUI;
+export default CarsUI;
