@@ -81,7 +81,7 @@ function LoginRegister() {
                 onChange={handleSetLoginName} /><br />
             Password: <input type="password" id="loginPassword" placeholder="Password"
                 onChange={handleSetPassword} />
-            <input type="submit" id="loginButton" className="buttons" value="Do It"
+            <input type="submit" id="loginButton" value="Do It"
                 onClick={doLogin} />
             <span id="loginResult">{message}</span>
         </div>
