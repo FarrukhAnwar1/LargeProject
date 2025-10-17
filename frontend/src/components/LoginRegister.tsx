@@ -6,85 +6,91 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import MD5 from 'crypto-js/md5';
 import { type TokenPayload } from '../Types';
+
 function LoginRegister() {
     const navigate = useNavigate();
     const [message, setMessage] = useState('');
-    const [loginName, setLoginName] = React.useState('');
-    const [loginPassword, setPassword] = React.useState('');
-    async function doLogin(event: React.MouseEvent<HTMLInputElement>): Promise<void> {
+    const [form, setForm] = useState({
+        loginName: '',
+        password: '',
+    });
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setForm(prev => ({ ...prev, [name]: value }));
+    };
+
+    const doLogin = async (event: React.MouseEvent<HTMLInputElement>) => {
         event.preventDefault();
-        const obj = { login: loginName, password: MD5(loginPassword).toString() };
-        const js = JSON.stringify(obj);
-        const config = {
-            method: 'post',
-            url: buildPath('api/login'),
-            headers:
-            {
-                'Content-Type': 'application/json'
-            },
-            data: js
-        };
-        axios(config).then(function (response) {
+
+        try {
+            const payload = {
+                login: form.loginName,
+                password: MD5(form.password).toString(),
+            };
+
+            const response = await axios.post(buildPath('api/login'), payload, {
+                headers: { 'Content-Type': 'application/json' },
+            });
+
             const res = response.data;
-            // If server returned an error (e.g. incorrect credentials), show it and stop.
-            if (res.error) {
-                setMessage(res.error);
-                return;
-            }
+            if (res.error) return setMessage(res.error);
 
             const accessToken = res.accessToken;
-            if (!accessToken || typeof accessToken !== 'string') {
-                setMessage('Login failed: invalid token from server');
-                return;
-            }
+            if (!accessToken || typeof accessToken !== 'string')
+                return setMessage('Login failed: invalid token from server');
 
             storeToken(res);
 
-            let decoded: TokenPayload | null = null;
-            try {
-                decoded = jwtDecode<TokenPayload>(accessToken);
-            }
-            catch (e) {
-                console.log(e);
-                setMessage('Failed to decode token');
-                return;
-            }
-
-            const ud = decoded;
-            const userId = ud?.userId ?? ud?.iat;
-            const firstName = ud?.firstName ?? '';
-            const lastName = ud?.lastName ?? '';
+            const decoded = jwtDecode<TokenPayload>(accessToken);
+            const userId = decoded?.userId ?? decoded?.iat;
+            const firstName = decoded?.firstName ?? '';
+            const lastName = decoded?.lastName ?? '';
 
             if (!userId || userId <= 0) {
-                setMessage('User/Password combination incorrect');
+                return setMessage('User/Password combination incorrect');
             }
-            else {
-                const user = { firstName: firstName, lastName: lastName, userId: userId }
-                localStorage.setItem('user_data', JSON.stringify(user));
-                setMessage('');
-                navigate("/cars");
-            }
-        }).catch(function (error) {
-            console.log(error);
-        });
+
+            const user = { firstName, lastName, userId };
+            localStorage.setItem('user_data', JSON.stringify(user));
+            setMessage('');
+            navigate('/cars');
+        } catch (err) {
+            console.error(err);
+            setMessage('An error occurred while logging in.');
+        }
     };
-    function handleSetLoginName(e: React.ChangeEvent<HTMLInputElement>): void {
-        setLoginName(e.target.value);
-    }
-    function handleSetPassword(e: React.ChangeEvent<HTMLInputElement>): void {
-        setPassword(e.target.value);
-    }
+
     return (
         <div id="loginDiv">
             <span id="inner-title">PLEASE LOG IN</span><br />
-            Login: <input type="text" id="loginName" placeholder="Username"
-                onChange={handleSetLoginName} /><br />
-            Password: <input type="password" id="loginPassword" placeholder="Password"
-                onChange={handleSetPassword} />
-            <input type="submit" id="loginButton" value="Do It"
-                onClick={doLogin} />
+            Login:
+            <input
+                type="text"
+                id="loginName"
+                name="loginName"
+                placeholder="Username"
+                value={form.loginName}
+                onChange={handleChange}
+            /><br />
+            Password:
+            <input
+                type="password"
+                id="loginPassword"
+                name="password"
+                placeholder="Password"
+                value={form.password}
+                onChange={handleChange}
+            />
+            <input
+                type="submit"
+                id="loginButton"
+                value="Do It"
+                onClick={doLogin}
+            />
             <span id="loginResult">{message}</span>
         </div>
     );
-};
+}
+
 export default LoginRegister;

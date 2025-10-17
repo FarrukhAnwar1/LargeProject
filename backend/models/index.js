@@ -1,3 +1,5 @@
-export { default as User } from './user';
-export { default as Car } from './car';
-export { default as Rental } from './rental';
+module.exports = {
+    User: require('./user'),
+    Car: require('./car'),
+    Rental: require('./rental'),
+};

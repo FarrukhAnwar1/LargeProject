@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 // Define the Rental schema
 const rentalSchema = new mongoose.Schema({
-    car: {
+    carID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Car',
         required: true,
@@ -53,6 +53,6 @@ const rentalSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // index to quickly find rentals by car and sort by rental date
-rentalSchema.index({ car: 1, dateRentedOut: -1 });
+rentalSchema.index({ carID: 1, dateRentedOut: -1 });
 
 module.exports = mongoose.model('Rental', rentalSchema);
