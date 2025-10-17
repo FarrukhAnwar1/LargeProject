@@ -1,32 +1,48 @@
-const mongoose = require("mongoose");
-const AutoIncrement = require("mongoose-sequence")(mongoose);
+const mongoose = require('mongoose');
 
-const Schema = mongoose.Schema;
+// Define the User schema
+const userSchema = new mongoose.Schema({
+  userName: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+  },
+  passwordHash: {
+    type: String,
+    required: true,
+  },
+  firstName: {
+    type: String,
+    trim: true,
+  },
+  lastName: {
+    type: String,
+    trim: true,
+  },
+  isVerified: {
+    type: Boolean,
+    default: false,
+  },
+  // Roles assigned to the user
+  role: {
+    type: [String],
+    enum: ['user', 'admin', 'superadmin'],
+    default: ['user'],
+  },
 
-const UserSchema = new Schema({
-    UserId: {
-        type: Number,
-        unique: true,
-    },
-    FirstName: {
-        type: String,
-        required: true,
-    },
-    LastName: {
-        type: String,
-        required: true,
-    },
-    Login: {
-        type: String,
-        required: true,
-        unique: true,
-    },
-    Password: {
-        type: String,
-        required: true,
-    },
+  // Password reset token and its expiration
+  Verification: {
+    token: String,
+    expires: Date,
+    consumedAt: Date,
+  },
 }, { timestamps: true });
 
-UserSchema.plugin(AutoIncrement, { inc_field: "UserId" });
-const User = mongoose.model("User", UserSchema, "Users");
-module.exports = User;
+module.exports = mongoose.model('User', userSchema);
