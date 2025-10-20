@@ -20,7 +20,7 @@ function LoginRegister() {
         setForm(prev => ({ ...prev, [name]: value }));
     };
 
-    const doLogin = async (event: React.MouseEvent<HTMLInputElement>) => {
+    const doLogin = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
 
         try {
@@ -82,12 +82,14 @@ function LoginRegister() {
                 value={form.password}
                 onChange={handleChange}
             />
-            <input
+            <br/>
+            <button
                 type="submit"
                 id="loginButton"
                 value="Do It"
                 onClick={doLogin}
-            />
+            >Do It</button>
+            <br/>
             <span id="loginResult">{message}</span>
         </div>
     );
