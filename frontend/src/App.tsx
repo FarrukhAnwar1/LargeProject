@@ -5,6 +5,7 @@ import Navbar from './components/Navbar';
 import VerificationPage from './pages/VerificationPage';
 import MobileDownloadPage from './pages/MobileDownloadPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
+import ModifyCarPage from './pages/ModifyCarPage';
 function App() {
     return (
         <div>
@@ -13,6 +14,7 @@ function App() {
                 <Routes>
                     <Route path="/" element={<LoginRegisterPage />} />
                     <Route path="/cars" element={<CarsPage />} />
+                    <Route path="/cars/:carId" element={<ModifyCarPage />} />
                     <Route path="/verify" element={<VerificationPage />} />
                     <Route path="/mobile" element={<MobileDownloadPage />} />
                     <Route path="/reset" element={<ResetPasswordPage />} />
