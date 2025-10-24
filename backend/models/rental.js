@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 // Define the Rental schema
 const rentalSchema = new mongoose.Schema({
