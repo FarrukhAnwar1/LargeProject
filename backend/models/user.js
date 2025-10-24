@@ -1,8 +1,13 @@
-import  mongoose from "mongoose";
-//const mongoose = require("mongoose");
+const mongoose = require('mongoose');
+
 // Define the User schema
 const userSchema = new mongoose.Schema({
-  
+    userName: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
+    },
     email: {
         type: String,
         required: true,
