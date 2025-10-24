@@ -1,13 +1,7 @@
-const mongoose = require('mongoose');
-
+import mongoose from "mongoose";
+//const mongoose = require("mongoose");
 // Define the User schema
 const userSchema = new mongoose.Schema({
-    userName: {
-        type: String,
-        required: true,
-        unique: true,
-        trim: true,
-    },
     email: {
         type: String,
         required: true,
@@ -32,7 +26,7 @@ const userSchema = new mongoose.Schema({
     companyName: {
         type: String,
         trim: true,
-        required:true,
+        required: true,
     },
 
     isVerified: {
@@ -55,7 +49,7 @@ const userSchema = new mongoose.Schema({
     //     consumedAt: Date,
     // },
 
- 
+
 
     //Adjusted verification tokens just for my use:
     verificationToken: String,
