@@ -4,8 +4,10 @@ import { useNavigate } from 'react-router-dom';
 function LoggedInName() {
     const navigate = useNavigate();
     function getCurrentUserName() {
-        const data = JSON.parse(localStorage.getItem('user_data') || '');
-        return data.firstName + ' ' + data.lastName;
+        // Currently commented out since JWT is not returned to frontend and is only stored as a cookie
+        // const data = JSON.parse(localStorage.getItem('user_data') || '');
+        // return data.firstName + ' ' + data.lastName;
+        return 'User';
     }
     function doLogout(event: React.MouseEvent<HTMLButtonElement>): void {
         event.preventDefault();

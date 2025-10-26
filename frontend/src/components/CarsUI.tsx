@@ -8,14 +8,14 @@ function CarsUI() {
     const [cardList, setCardList] = useState('');
     const [search, setSearchValue] = React.useState('');
     const [card, setCardNameValue] = React.useState('');
-    const _ud = localStorage.getItem('user_data');
-    const ud = JSON.parse(String(_ud));
-    const userId = ud.userId;
-    // var firstName = ud.firstName;
-    // var lastName = ud.lastName;
+    // Currently commented out since JWT is not returned to frontend and is only stored as a cookie
+    // const _ud = localStorage.getItem('user_data');
+    // const ud = JSON.parse(String(_ud));
+    // const userId = ud.userId;
+    
     async function addCard(e: React.MouseEvent<HTMLButtonElement>): Promise<void> {
         e.preventDefault();
-        const obj = { userId: userId, card: card, jwtToken: retrieveToken() };
+        const obj = { card: card, jwtToken: retrieveToken() };
         const js = JSON.stringify(obj);
         const config = {
             method: 'post',
@@ -43,7 +43,7 @@ function CarsUI() {
     };
     async function searchCard(e: React.MouseEvent<HTMLButtonElement>): Promise<void> {
         e.preventDefault();
-        const obj = { userId: userId, search: search, jwtToken: retrieveToken() };
+        const obj = { search: search, jwtToken: retrieveToken() };
         const js = JSON.stringify(obj);
         const config = {
             method: 'post',

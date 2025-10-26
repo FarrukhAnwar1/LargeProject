@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { buildPath } from '../Path';
-import { storeToken } from '../TokenStorage';
-import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import MD5 from 'crypto-js/md5';
-import { type TokenPayload } from '../Types';
+import axios, { AxiosError } from 'axios';
+// Currently commented out since JWT is not returned to frontend and is only stored as a cookie
+// import { storeToken } from '../TokenStorage';
+// import { jwtDecode } from 'jwt-decode';
+// import { type TokenPayload } from '../Types';
 
 function LoginRegister() {
     const navigate = useNavigate();
     const [message, setMessage] = useState('');
     const [form, setForm] = useState({
-        loginName: '',
+        email: '',
         password: '',
     });
 
@@ -25,38 +25,43 @@ function LoginRegister() {
 
         try {
             const payload = {
-                login: form.loginName,
-                password: MD5(form.password).toString(),
+                email: form.email,
+                password: form.password
             };
 
-            const response = await axios.post(buildPath('api/login'), payload, {
+            const response = await axios.post(buildPath('api/auth/login'), payload, {
                 headers: { 'Content-Type': 'application/json' },
             });
 
             const res = response.data;
-            if (res.error) return setMessage(res.error);
+            if (!res.success) return setMessage(res.message);
+            
+            // Currently commented out since JWT is not returned to frontend and is only stored as a cookie
+            // const accessToken = res.accessToken;
+            // if (!accessToken || typeof accessToken !== 'string')
+            //     return setMessage('Login failed: invalid token from server');
 
-            const accessToken = res.accessToken;
-            if (!accessToken || typeof accessToken !== 'string')
-                return setMessage('Login failed: invalid token from server');
+            // storeToken(res);
 
-            storeToken(res);
+            // const decoded = jwtDecode<TokenPayload>(accessToken);
+            // const userId = decoded?.userId ?? decoded?.iat;
+            // const firstName = decoded?.firstName ?? '';
+            // const lastName = decoded?.lastName ?? '';
 
-            const decoded = jwtDecode<TokenPayload>(accessToken);
-            const userId = decoded?.userId ?? decoded?.iat;
-            const firstName = decoded?.firstName ?? '';
-            const lastName = decoded?.lastName ?? '';
+            // if (!userId || userId <= 0) {
+            //     return setMessage('Email/Password combination incorrect');
+            // }
 
-            if (!userId || userId <= 0) {
-                return setMessage('User/Password combination incorrect');
-            }
-
-            const user = { firstName, lastName, userId };
-            localStorage.setItem('user_data', JSON.stringify(user));
+            // const user = { firstName, lastName, userId };
+            // localStorage.setItem('user_data', JSON.stringify(user));
             setMessage('');
             navigate('/cars');
         } catch (err) {
             console.error(err);
+            if (err instanceof AxiosError && err?.response?.data.message ) {
+                setMessage(err.response.data.message);
+                return;
+            }
             setMessage('An error occurred while logging in.');
         }
     };
@@ -64,13 +69,13 @@ function LoginRegister() {
     return (
         <div id="loginDiv">
             <span id="inner-title">PLEASE LOG IN</span><br />
-            Login:
+            Email:
             <input
                 type="text"
-                id="loginName"
-                name="loginName"
-                placeholder="Username"
-                value={form.loginName}
+                id="email"
+                name="email"
+                placeholder="Email"
+                value={form.email}
                 onChange={handleChange}
             /><br />
             Password:
