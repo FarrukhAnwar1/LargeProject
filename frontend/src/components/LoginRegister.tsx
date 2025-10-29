@@ -67,33 +67,41 @@ function LoginRegister() {
     };
 
     return (
-        <div id="loginDiv">
-            <span id="inner-title">PLEASE LOG IN</span><br />
-            Email:
-            <input
-                type="text"
-                id="email"
-                name="email"
-                placeholder="Email"
-                value={form.email}
-                onChange={handleChange}
-            /><br />
+        <div className="card" id="loginDiv">
+            <span id="inner-title" className='text-2xl'>PLEASE!!! LOG IN</span><br />
+            <div className="login-input pt-4">
+                <p className=''>Email:</p>
+                <input
+                    className='p-2'
+                    type="text"
+                    id="email"
+                    name="email"
+                    placeholder="Email"
+                    value={form.email}
+                    onChange={handleChange}
+                    />
+            </div>
+            <br />
+            <div className="login-input !pb-6">
             Password:
+            <br />
             <input
+                className="p-2"
                 type="password"
                 id="loginPassword"
                 name="password"
                 placeholder="Password"
                 value={form.password}
                 onChange={handleChange}
-            />
+                />
+            </div>
             <br/>
             <button
                 type="submit"
                 id="loginButton"
                 value="Do It"
                 onClick={doLogin}
-            >Do It</button>
+            >Login</button>
             <br/>
             <span id="loginResult">{message}</span>
         </div>
