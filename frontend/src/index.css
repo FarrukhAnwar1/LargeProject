@@ -32,6 +32,7 @@
     --line-faded: #2d7c901e;
     --primary: #22577A;
     --primary-text: #ffffff;
+    --error-text: #ca0000;
     --shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 
     font-family: ui-sans-serif, system-ui, Segoe UI, Roboto, Arial;

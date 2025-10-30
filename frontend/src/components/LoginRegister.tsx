@@ -112,7 +112,7 @@ function LoginRegister() {
             </div>
             <br/>
             <div className='text-center'>
-                <span id="loginResult" className='font-medium'>{message}</span>
+                <span id="loginResult" className='font-medium text-[var(--error-text)]'>{message}</span>
             </div>
             <div className='text-center pt-4'>
                 <p className='font-medium'>Don't have an account?</p>
