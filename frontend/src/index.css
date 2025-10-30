@@ -1,24 +1,41 @@
 @import "tailwindcss";
 
-:root {
+@theme {
     /* I expanded the palette a bit. Here is the link to the one I have.
         
         https://coolors.co/22577a-2d7d90-38a3a5-48b89f-57cc99-6cdd99-80ed99-a4f3b3-b6f6c0-c7f9cc
     */
-
-    font-family: ui-sans-serif, system-ui, Segoe UI, Roboto, Arial;
-    font-weight: 400;
-
     --bg: #B6F6C0;
     --card: #F8FAFC;
     --text: #1E293B;
     --muted: #57CC99;
     --muted-text: #64748B;
+    --muted2: #48B89F;
+    --muted3: #38A3A5;
     --line: #2D7D90;
     --line-faded: #2d7c901e;
     --primary: #22577A;
     --primary-text: #ffffff;
-    --shadow: 0 10px 30px rgba(2, 6, 23, 0.08);
+    --shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+
+    --animate-subtle-raise: raise 0.5s linear forwards;
+
+    @keyframes raise {
+
+        0% {
+            transform: translateY(0px);
+        }
+
+        100% {
+            transform: translateY(-2.5px);
+        }
+    }
+}
+
+:root {
+    font-family: ui-sans-serif, system-ui, Segoe UI, Roboto, Arial;
+    font-weight: 400;
+
     --radius: 14px;
 
     font-synthesis: none;
@@ -35,12 +52,12 @@
     justify-content: space-between;
     padding: 12px 16px;
     background: var(--muted);
-    color: var(--prtext);
-    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    color: black;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
 .card {
-    max-width: 1040px;
+    max-width: 35em;
     margin: 48px auto;
     padding: 24px;
     background: var(--card);
