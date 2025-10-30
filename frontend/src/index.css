@@ -5,18 +5,6 @@
         
         https://coolors.co/22577a-2d7d90-38a3a5-48b89f-57cc99-6cdd99-80ed99-a4f3b3-b6f6c0-c7f9cc
     */
-    --bg: #B6F6C0;
-    --card: #F8FAFC;
-    --text: #1E293B;
-    --muted: #57CC99;
-    --muted-text: #64748B;
-    --muted2: #48B89F;
-    --muted3: #38A3A5;
-    --line: #2D7D90;
-    --line-faded: #2d7c901e;
-    --primary: #22577A;
-    --primary-text: #ffffff;
-    --shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 
     --animate-subtle-raise: raise 0.5s linear forwards;
 
@@ -33,6 +21,19 @@
 }
 
 :root {
+    --bg: #B6F6C0;
+    --card: #F8FAFC;
+    --text: #1E293B;
+    --muted: #57CC99;
+    --muted-text: #64748B;
+    --muted2: #48B89F;
+    --muted3: #38A3A5;
+    --line: #2D7D90;
+    --line-faded: #2d7c901e;
+    --primary: #22577A;
+    --primary-text: #ffffff;
+    --shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+
     font-family: ui-sans-serif, system-ui, Segoe UI, Roboto, Arial;
     font-weight: 400;
 

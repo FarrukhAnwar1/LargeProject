@@ -114,6 +114,11 @@ function LoginRegister() {
             <div className='text-center'>
                 <span id="loginResult" className='font-medium'>{message}</span>
             </div>
+            <div className='pt-4'>
+                <p>
+                    
+                </p>
+            </div>
         </div>
     );
 }
