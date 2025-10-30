@@ -114,10 +114,14 @@ function LoginRegister() {
             <div className='text-center'>
                 <span id="loginResult" className='font-medium'>{message}</span>
             </div>
-            <div className='pt-4'>
-                <p>
-                    
-                </p>
+            <div className='text-center pt-4'>
+                <p className='font-medium'>Don't have an account?</p>
+                <button
+                    className='!px-20 bg-linear-65 from-[var(--muted2)] to-[var(--muted)]'
+                    type="submit"
+                    id="signupLinkButton"
+                    value="Do It"
+                >Sign Up</button>
             </div>
         </div>
     );
