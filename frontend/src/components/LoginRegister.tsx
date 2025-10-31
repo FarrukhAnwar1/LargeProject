@@ -66,6 +66,11 @@ function LoginRegister() {
         }
     };
 
+    const goToRegister = (event: React.MouseEvent<HTMLButtonElement>) => {
+            event.preventDefault();
+            navigate('/register');
+    };
+
     return (
         <div className="card" id="loginDiv">
             <div className='text-center'>
@@ -121,6 +126,7 @@ function LoginRegister() {
                     type="submit"
                     id="signupLinkButton"
                     value="Do It"
+                    onClick={goToRegister}
                 >Sign Up</button>
             </div>
         </div>

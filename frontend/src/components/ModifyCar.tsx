@@ -383,7 +383,7 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
                             <input placeholder='johndoe@email.com' name='renterEmail' value={rentalForm.renterEmail} onChange={handleRentalChange} className='p-2 w-full' />
                         </div>
                         <div>
-                            <label className='block'>Phone</label>
+                            <label className='block'>Renter Phone Number</label>
                             <input placeholder='1234567890' name='renterPhone' value={rentalForm.renterPhone} onChange={handleRentalChange} className='p-2 w-full' />
                         </div>
                     </div>
