@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { buildPath } from '../Path';
@@ -12,6 +12,15 @@ function Signup(){
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
     const [errors, setErrors] = useState<string[]>([]);
+    const [registeredSuccess, setRegisteredSuccess] = useState<boolean>(false);
+    const [countdown, setCountdown] = useState<number>(5);
+    const redirectIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+    useEffect(() => {
+        return () => {
+            if (redirectIntervalRef.current) clearInterval(redirectIntervalRef.current);
+        };
+    }, []);
 
     const goToLogin = (event?: React.MouseEvent<HTMLButtonElement>) => {
             event?.preventDefault();
@@ -39,9 +48,22 @@ function Signup(){
             const payload = { email: email.trim(), firstName: firstName.trim(), lastName: lastName.trim(), companyName: 'N/A', password };
             const res = await axios.post(buildPath('api/auth/signup'), payload, { headers: { 'Content-Type': 'application/json' } });
             if (res?.status === 201 || res?.data?.success) {
+                setRegisteredSuccess(true);
                 setMessage('Registration successful. Check your email for verification. Redirecting to login...');
-                setTimeout(() => navigate('/'), 1500);
+                setCountdown(5);
+                // start 5s countdown then redirect to login
+                let t = 5;
+                if (redirectIntervalRef.current) clearInterval(redirectIntervalRef.current);
+                redirectIntervalRef.current = setInterval(() => {
+                    t -= 1;
+                    setCountdown(t);
+                    if (t <= 0) {
+                        if (redirectIntervalRef.current) clearInterval(redirectIntervalRef.current);
+                        navigate('/');
+                    }
+                }, 1000);
             } else {
+                setRegisteredSuccess(false);
                 setMessage(res?.data?.message || 'Registration completed.');
             }
         } catch (err: unknown) {
@@ -53,6 +75,7 @@ function Signup(){
             } else if (err instanceof Error) {
                 msg = err.message;
             }
+            setRegisteredSuccess(false);
             setMessage(msg);
         } finally {
             setLoading(false);
@@ -139,7 +162,10 @@ function Signup(){
             </div>
             <br/>
             <div className='text-center '>
-                <span id="registerResult" className='font-medium text-[var(--error-text)]'>{message}</span>
+                <span id="registerResult" className={`font-medium ${registeredSuccess ? 'text-[var(--success)]' : (message ? 'text-[var(--error-text)]' : '')}`}>{message}</span>
+                {registeredSuccess && (
+                    <div className='text-sm text-[var(--muted-text)] pt-2'>Redirecting to login in {countdown}s...</div>
+                )}
             </div>
             <div className='text-center pt-4'>
                 <p className='font-medium'>Already have an account?</p>
