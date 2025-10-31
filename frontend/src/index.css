@@ -82,6 +82,79 @@ input {
     outline: none;
 }
 
+.fancy-select {
+    border: 1px solid #cbd5e1; /* light gray so it doesn't blend into white */
+    border-radius: 10px;
+    background: #fff;
+    padding-right: 2.25rem; /* room for arrow */
+}
+
+/* Notes textarea: keep a visible outline even when unfocused so it's easy to spot */
+.notes-textarea {
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: none;
+}
+.notes-textarea:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(34,87,122,0.08);
+}
+
+/* Danger button that uses the --error-text variable for background */
+.btn-danger {
+    background: var(--error-text);
+    color: #fff;
+    border: 1px solid rgba(0,0,0,0.06);
+}
+.btn-danger:hover {
+    filter: brightness(0.95);
+}
+
+.toggle-switch {
+    width: 44px;
+    height: 26px;
+    background: #e2e8f0;
+    border-radius: 9999px;
+    position: relative;
+    border: 1px solid #cbd5e1;
+    display: inline-flex;
+    align-items: center;
+    padding: 3px;
+}
+.toggle-switch.on {
+    background: linear-gradient(65deg, var(--muted2), var(--muted));
+}
+.toggle-thumb {
+    width: 18px;
+    height: 18px;
+    background: white;
+    border-radius: 9999px;
+    display: block;
+    transition: transform 180ms ease;
+}
+.toggle-switch.on .toggle-thumb {
+    transform: translateX(18px);
+}
+
+.warning-item-enter {
+    opacity: 0;
+    transform: scale(.98);
+}
+.warning-item-enter-active {
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity 200ms, transform 200ms;
+}
+.warning-item-exit {
+    opacity: 1;
+}
+.warning-item-exit-active {
+    opacity: 0;
+    transform: scale(.98);
+    transition: opacity 200ms, transform 200ms;
+}
+
 
 body {
     background-color: var(--bg);
