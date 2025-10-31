@@ -1,5 +1,6 @@
 import { resend } from "./config.js";
 import { verificationTokenEmailTemplate, WELCOME_EMAIL_TEMPLATE } from "./email-template.js";
+import { buildPath } from "../src/utils/path.js";
 
 export const sendVerificationEmail = async (email, verificationToken) => {
   
@@ -10,7 +11,7 @@ export const sendVerificationEmail = async (email, verificationToken) => {
       from: "CarStax <noreply@farrukhanwar.site>",
       to: [email],
       subject: "CarStax E-mail Verification",
-      html: verificationTokenEmailTemplate.replace("{verificationToken}", verificationToken),
+      html: verificationTokenEmailTemplate.replace("{verificationToken}", buildPath(`verify/${verificationToken}`)),
     });
 
     if (error) {

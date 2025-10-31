@@ -33,6 +33,7 @@
     --primary: #22577A;
     --primary-text: #ffffff;
     --error-text: #ca0000;
+    --success: #1e7a3a; /* dark green for success messages/buttons */
     --shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 
     font-family: ui-sans-serif, system-ui, Segoe UI, Roboto, Arial;

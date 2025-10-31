@@ -351,7 +351,6 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
                 </div>
             </div>
 
-            {/* Warning section moved up before rental info per request (reduced spacing) */}
             <hr className='my-4' />
 
             <div className='pt-2'>
@@ -416,9 +415,6 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
                     </div>
                 </div>
             )}
-
-
-            {/* duplicate warning section removed */}
 
             {errors.length > 0 && (
                 <div className='text-left text-sm text-[var(--error-text)] pt-4'>

@@ -17,7 +17,7 @@ function App() {
                     <Route path="/register" element={<SignupPage/>} />
                     <Route path="/cars" element={<CarsPage />} />
                     <Route path="/cars/:carId" element={<ModifyCarPage />} />
-                    <Route path="/verify" element={<VerificationPage />} />
+                    <Route path="/verify/:verificationToken" element={<VerificationPage />} />
                     <Route path="/mobile" element={<MobileDownloadPage />} />
                     <Route path="/reset" element={<ResetPasswordPage />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
