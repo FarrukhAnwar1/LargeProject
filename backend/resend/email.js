@@ -7,7 +7,7 @@ export const sendVerificationEmail = async (email, verificationToken) => {
 
   try {
     const { data, error } = await resend.emails.send({
-      from: "CarStax <onboarding@resend.dev>",
+      from: "CarStax <noreply@farrukhanwar.site>",
       to: [email],
       subject: "CarStax E-mail Verification",
       html: verificationTokenEmailTemplate.replace("{verificationToken}", verificationToken),
@@ -30,7 +30,7 @@ export const sendVerificationEmail = async (email, verificationToken) => {
 export const sendWelcomeEmail = async(email,name)=> {
     try{
         const { data, error } = await resend.emails.send({
-            from: "CarStax <onboarding@resend.dev>",
+            from: "CarStax <noreply@farrukhanwar.site>",
             to: [email],
             subject: "Welcome to CarStax",
             html: WELCOME_EMAIL_TEMPLATE.replace("{name}", name),
@@ -44,7 +44,7 @@ export const sendWelcomeEmail = async(email,name)=> {
 export const sendPasswordResetEmail = async(email, resetURL) => {
     try{
         const { data, error } = await resend.emails.send({
-            from: "CarStax <onboarding@resend.dev>",
+            from: "CarStax <noreply@farrukhanwar.site>",
             to: [email],
             subject: "Reset your Password",
             html: `Click <a href="${resetURL}">here</a> to reset your password`,
@@ -58,7 +58,7 @@ export const sendPasswordResetEmail = async(email, resetURL) => {
 export const sendResetSuccessEmail = async(email) =>{
      try{
         const { data, error } = await resend.emails.send({
-            from: "CarStax <onboarding@resend.dev>",
+            from: "CarStax <noreply@farrukhanwar.site>",
             to: [email],
             subject: "Password Reset Successful",
             html: `Your password was reset successfully`,
