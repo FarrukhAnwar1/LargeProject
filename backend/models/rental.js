@@ -55,4 +55,5 @@ const rentalSchema = new mongoose.Schema({
 // index to quickly find rentals by car and sort by rental date
 rentalSchema.index({ carID: 1, dateRentedOut: -1 });
 
-module.exports = mongoose.model('Rental', rentalSchema);
+const Rental = mongoose.model('Rental', rentalSchema);
+export default Rental;
