@@ -13,7 +13,7 @@ function Signup() {
     const [message, setMessage] = useState('');
     const [errors, setErrors] = useState<string[]>([]);
     const [registeredSuccess, setRegisteredSuccess] = useState<boolean>(false);
-    const [countdown, setCountdown] = useState<number>(5);
+    const [countdown, setCountdown] = useState<number>(10);
     const redirectIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
     useEffect(() => {
@@ -49,10 +49,10 @@ function Signup() {
             const res = await axios.post(buildPath('api/auth/signup'), payload, { headers: { 'Content-Type': 'application/json' } });
             if (res?.status === 201 || res?.data?.success) {
                 setRegisteredSuccess(true);
-                setMessage('Registration successful. Check your email for verification. Redirecting to login...');
-                setCountdown(5);
-                // start 5s countdown then redirect to login
-                let t = 5;
+                setMessage('Registration successful. Check your email for verification.');
+                setCountdown(10);
+                // start 10s countdown then redirect to login
+                let t = 10;
                 if (redirectIntervalRef.current) clearInterval(redirectIntervalRef.current);
                 redirectIntervalRef.current = setInterval(() => {
                     t -= 1;

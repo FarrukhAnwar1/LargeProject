@@ -13,7 +13,7 @@ const Verification = ({ verificationToken }: VerificationProps) => {
     const [message, setMessage] = useState<string>('Verifying...');
     const [loading, setLoading] = useState<boolean>(true);
     const [verified, setVerified] = useState<boolean>(false);
-    const [countdown, setCountdown] = useState<number>(3);
+    const [countdown, setCountdown] = useState<number>(5);
 
     const tokenFromQuery = searchParams.get('code') || searchParams.get('token');
     const token = verificationToken || tokenFromQuery;
@@ -33,11 +33,11 @@ const Verification = ({ verificationToken }: VerificationProps) => {
             try {
                 const res = await axios.post(buildPath('api/auth/verify-email'), { code: token }, { headers: { 'Content-Type': 'application/json' } });
                 if (res?.data?.success) {
-                    setMessage(res.data.message || 'Email verified successfully. Redirecting to login...');
+                    setMessage(res.data.message || 'Email verified successfully.');
                     setVerified(true);
-                    setCountdown(3);
+                    setCountdown(5);
                     // start countdown to redirect
-                    let t = 3;
+                    let t = 5;
                     intervalId = setInterval(() => {
                         t -= 1;
                         setCountdown(t);
