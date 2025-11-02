@@ -64,9 +64,9 @@ const carSchema = new mongoose.Schema({
         trim: true,
     },
     carType: {
-        type: [String],
+        type: String,
         enum: ['sedan', 'suv', 'truck', 'coupe', 'convertible', 'hatchback', 'van', 'motorcycle', 'other'],
-        default: ['sedan'],
+        default: 'sedan',
     }
 }, { timestamps: true });
 

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios, { AxiosError } from 'axios';
 import { buildPath } from '../Path';
 import ConfirmModal from './ConfirmModal';
+import TileCarousel from './TileCarousel';
 
 type ModifyCarProps = {
     carId?: string; // pass 'add' to create a new car
@@ -50,7 +51,24 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
     const [showSuccessModal, setShowSuccessModal] = useState(false);
     // Rental visibility is derived from rentalStatus === 'rented'
 
-    const [yearOptions, setYearOptions] = useState<string[]>([]);
+    // Tile options for car type and rental status. Icons are expected in ../resources/icons
+    const carTypeOptions = [
+        { id: 'sedan', label: 'Sedan', icon: 'sedan.png' },
+        { id: 'suv', label: 'SUV', icon: 'suv.png' },
+        { id: 'truck', label: 'Truck', icon: 'truck.png' },
+        { id: 'coupe', label: 'Coupe', icon: 'coupe.png' },
+        { id: 'convertible', label: 'Convertible', icon: 'convertible.png' },
+        { id: 'hatchback', label: 'Hatchback', icon: 'hatchback.png' },
+        { id: 'van', label: 'Van', icon: 'van.png' },
+        { id: 'motorcycle', label: 'Motorcycle', icon: 'motorcycle.png' },
+        { id: 'other', label: 'Other', icon: 'other.png' }
+    ];
+
+    const rentalStatusOptions = [
+        { id: 'available', label: 'Available', icon: 'available.png' },
+        { id: 'rented', label: 'Rented', icon: 'rented.png' },
+        { id: 'maintenance', label: 'Maintenance', icon: 'maintenance.png' }
+    ];
 
     // Helpers to update typed form fields without using `any` casts
     type CarInputKey = Exclude<keyof CarForm, 'warningLightIndicators'>;
@@ -63,12 +81,6 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
     }
 
     useEffect(() => {
-        // generate year options (1900 .. next year)
-        const thisYear = new Date().getFullYear();
-        const years: string[] = [];
-        for (let y = thisYear + 1; y >= 1900; y--) years.push(String(y));
-        setYearOptions(years);
-
         if (!isAdd && carId) {
             // Placeholder: fetch car and its current rental (if any)
             (async () => {
@@ -86,7 +98,7 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
                             model: car.model ?? '',
                             mileage: car.mileage != null ? Number(car.mileage) : 0,
                             registrationNumber: car.registrationNumber ?? '',
-                            carType: Array.isArray(car.carType) ? (car.carType[0] ?? 'sedan') : (car.carType ?? 'sedan'),
+                            carType: car.carType ?? 'sedan',
                             warningLightIndicators: Array.isArray(car.warningLightIndicators) ? car.warningLightIndicators : [],
                             rentalStatus: car.rentalStatus ?? 'available'
                         });
@@ -121,9 +133,11 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
         const name = e.target.name as CarInputKey;
         const value = e.target.value;
         if (name === 'mileage') {
-            // store mileage as number
-            const n = Number(value);
-            setCarField(name, (Number.isNaN(n) ? 0 : n) as CarForm[typeof name]);
+            // Handle mileage input
+            const n = value === '' ? 0 : Number(value.replace(/^0+/, '')); // Remove leading zeros
+            if (!Number.isNaN(n)) {
+                setCarField(name, n as CarForm[typeof name]);
+            }
             return;
         }
         setCarField(name, value as unknown as CarForm[typeof name]);
@@ -149,11 +163,26 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
     const handleRentalChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const name = e.target.name as keyof RentalForm;
         const value = e.target.value;
-        if (name === 'rentalRatePerDay') {
-            const n = Number(value);
-            setRentalField(name, (Number.isNaN(n) ? 0 : n) as RentalForm[typeof name]);
+        
+        if (name === 'dateRentedOut') {
+            // Reset related date fields when rental date changes
+            setRentalForm(prev => ({
+                ...prev,
+                dateRentedOut: value,
+                expectedReturnDate: '',
+                actualReturnDate: ''
+            }));
             return;
         }
+        
+        if (name === 'rentalRatePerDay') {
+            const n = value === '' ? 0 : Number(value.replace(/^0+/, '')); // Remove leading zeros
+            if (!Number.isNaN(n)) {
+                setRentalField(name, n as RentalForm[typeof name]);
+            }
+            return;
+        }
+        
         setRentalField(name, value as unknown as RentalForm[typeof name]);
     };
 
@@ -164,9 +193,10 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
         if (!carForm.year || Number.isNaN(yearNum) || yearNum < 1900 || yearNum > new Date().getFullYear() + 1) errs.push('Enter a valid year.');
         if (!carForm.make) errs.push('Make is required.');
         if (!carForm.model) errs.push('Model is required.');
+        if (!carForm.color || carForm.color.trim().length === 0) errs.push('Color is required.');
         if (!carForm.registrationNumber) errs.push('Registration number is required.');
-    const mileageNum = carForm.mileage;
-    if (Number.isNaN(mileageNum) || mileageNum < 0) errs.push('Mileage must be a non-negative number.');
+        const mileageNum = carForm.mileage;
+        if (Number.isNaN(mileageNum) || mileageNum < 0) errs.push('Mileage must be a non-negative number.');
 
         // Rental: if renter name filled, require email and dates
         if (rentalForm.renterName) {
@@ -188,15 +218,15 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
         if (!validate()) return;
         setLoading(true);
         try {
-                const carPayload = {
+            const carPayload = {
                 licensePlate: carForm.licensePlate.trim(),
                 year: Number(carForm.year),
                 color: carForm.color.trim(),
                 make: carForm.make.trim(),
                 model: carForm.model.trim(),
-                    mileage: carForm.mileage,
+                mileage: carForm.mileage,
                 registrationNumber: carForm.registrationNumber.trim(),
-                carType: [carForm.carType],
+                carType: carForm.carType,
                 warningLightIndicators: carForm.warningLightIndicators.map(i => i.text),
                 rentalStatus: carForm.rentalStatus
             };
@@ -213,7 +243,7 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
 
             // Handle rental: if renter provided, create/update rental
             if (rentalForm.renterName) {
-                    const rentalPayload = {
+                const rentalPayload = {
                     renterName: rentalForm.renterName.trim(),
                     renterEmail: rentalForm.renterEmail.trim(),
                     renterPhone: rentalForm.renterPhone.trim(),
@@ -267,14 +297,22 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
 
     return (
         <div className="card max-w-2xl mx-auto p-6 relative" style={{ minWidth: 320 }}>
-            <div className='absolute left-4 top-4'>
-                <button className='px-3 py-2 bg-white border' onClick={() => history.back()}>Go back</button>
+            <div className='absolute right-4 top-4'>
+                <button className='px-3 py-2 bg-white border hover:bg-gray-50 flex items-center gap-2' onClick={() => history.back()}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    Cancel
+                </button>
             </div>
             <div className='text-center'>
                 <strong className='text-2xl font-bold'>{isAdd ? 'Add Car' : 'Edit Car'}</strong>
             </div>
 
             {loading && <div className='text-center text-sm mt-2'>Loading...</div>}
+
+            <hr className='my-4' />
+            <div className='text-lg font-semibold'>Car Information</div>
 
             <div className='pt-4'>
                 <label className='block font-medium'>License Plate</label>
@@ -284,17 +322,20 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
             <div className='grid grid-cols-2 gap-4 pt-4'>
                 <div>
                     <label className='block font-medium'>Year</label>
-                    <div className='relative'>
-                        <select name='year' value={carForm.year} onChange={handleCarChange} className='fancy-select p-2 w-full appearance-none'>
-                            <option value=''>Select year</option>
-                            {yearOptions.map(y => <option key={y} value={y}>{y}</option>)}
-                        </select>
-                        <div className='pointer-events-none absolute right-3 top-3 text-gray-600'>▾</div>
-                    </div>
+                    <input type="number" min="1900" max={new Date().getFullYear() + 1} name='year' value={carForm.year} onChange={handleCarChange} className='p-2 w-full' placeholder='2025' />
                 </div>
                 <div>
                     <label className='block font-medium'>Mileage</label>
-                    <input name='mileage' value={carForm.mileage} onChange={handleCarChange} className='p-2 w-full' />
+                    <input 
+                        type="number" 
+                        min="0" 
+                        name='mileage' 
+                        value={carForm.mileage || ''} 
+                        onChange={handleCarChange} 
+                        className='p-2 w-full'
+                        placeholder="0"
+                        onFocus={(e) => e.target.value === '0' && e.target.select()}
+                    />
                 </div>
             </div>
 
@@ -312,7 +353,7 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
             <div className='grid grid-cols-2 gap-4 pt-4'>
                 <div>
                     <label className='block font-medium'>Color</label>
-                    <input placeholder='Black' name='color' value={carForm.color} onChange={handleCarChange} className='p-2 w-full' />
+                    <input required placeholder='Black' name='color' value={carForm.color} onChange={handleCarChange} className='p-2 w-full' />
                 </div>
                 <div>
                     <label className='block font-medium'>Registration Number</label>
@@ -320,50 +361,54 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
                 </div>
             </div>
 
-            <div className='grid grid-cols-2 gap-4 pt-4'>
+            <div className='pt-4'>
                 <div>
-                    <label className='block font-medium'>Car Type</label>
-                    <div className='relative'>
-                        <select name='carType' value={carForm.carType} onChange={handleCarChange} className='fancy-select p-2 w-full appearance-none'>
-                            <option value='sedan'>Sedan</option>
-                            <option value='suv'>SUV</option>
-                            <option value='truck'>Truck</option>
-                            <option value='coupe'>Coupe</option>
-                            <option value='convertible'>Convertible</option>
-                            <option value='hatchback'>Hatchback</option>
-                            <option value='van'>Van</option>
-                            <option value='motorcycle'>Motorcycle</option>
-                            <option value='other'>Other</option>
-                        </select>
-                        <div className='pointer-events-none absolute right-3 top-3 text-gray-600'>▾</div>
-                    </div>
-                </div>
-                <div>
-                    <label className='block font-medium'>Rental Status</label>
-                    <div className='relative'>
-                        <select name='rentalStatus' value={carForm.rentalStatus} onChange={handleCarChange} className='fancy-select p-2 w-full appearance-none'>
-                            <option value='available'>Available</option>
-                            <option value='rented'>Rented</option>
-                            <option value='maintenance'>Maintenance</option>
-                        </select>
-                        <div className='pointer-events-none absolute right-3 top-3 text-gray-600'>▾</div>
-                    </div>
+                    <label className='block font-medium mb-2'>Car Type</label>
+                    <TileCarousel
+                        options={carTypeOptions}
+                        value={carForm.carType}
+                        onChange={(id) => setCarField('carType', id as CarForm['carType'])}
+                        ariaLabel='Car Types'
+                    />
                 </div>
             </div>
 
-            <hr className='my-4' />
+            <div className='pt-4'>
+                <div>
+                    <label className='block font-medium mb-2'>Rental Status</label>
+                    <TileCarousel
+                        options={rentalStatusOptions}
+                        value={carForm.rentalStatus}
+                        onChange={(id) => setCarField('rentalStatus', id as CarForm['rentalStatus'])}
+                        ariaLabel='Rental Status'
+                    />
+                </div>
+            </div>
 
             <div className='pt-2'>
-                <div className='text-lg font-semibold'>Warning Light Indicators</div>
+                <div className='flex items-center justify-between'>
+                    <div className='font-medium'>Mechanical/Electrical Issues</div>
+                    <div>
+                        <button className='w-32 px-4 py-2 bg-linear-65 from-[var(--muted2)] to-[var(--muted)] flex items-center justify-center gap-2' onClick={addWarningIndicator}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            Add
+                        </button>
+                    </div>
+                </div>
                 {carForm.warningLightIndicators.map((w, i) => (
                     <div key={w.id} className={`flex gap-2 items-center pt-2 transition-all duration-200 ${w.removing ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
-                        <input placeholder='Indicator' value={w.text} onChange={e => updateWarningIndicator(i, e.target.value)} className='p-2 flex-1' />
-                        <button className='px-3 py-2 btn-danger text-white' onClick={() => removeWarningIndicator(i)}>Remove</button>
+                        <input placeholder='Issue' value={w.text} onChange={e => updateWarningIndicator(i, e.target.value)} className='p-2 flex-1' />
+                        <button className='w-32 px-4 py-2 btn-danger text-white flex items-center justify-center gap-2' onClick={() => removeWarningIndicator(i)}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            Remove
+                        </button>
                     </div>
                 ))}
-                <div className='pt-3'>
-                    <button className='px-4 py-2 bg-linear-65 from-[var(--muted2)] to-[var(--muted)]' onClick={addWarningIndicator}>+ Add Indicator</button>
-                </div>
             </div>
 
             {carForm.rentalStatus === 'rented' && (
@@ -390,22 +435,54 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
                     <div className='grid grid-cols-2 gap-4 pt-3'>
                         <div>
                             <label className='block'>Date Rented Out</label>
-                            <input type='date' name='dateRentedOut' value={rentalForm.dateRentedOut} onChange={handleRentalChange} className='p-2 w-full' />
+                            <input
+                                type='date'
+                                name='dateRentedOut'
+                                value={rentalForm.dateRentedOut}
+                                onChange={handleRentalChange}
+                                className='p-2 w-full'
+                            />
                         </div>
                         <div>
                             <label className='block'>Expected Return</label>
-                            <input type='date' name='expectedReturnDate' value={rentalForm.expectedReturnDate} onChange={handleRentalChange} className='p-2 w-full' />
+                            <input
+                                type='date'
+                                name='expectedReturnDate'
+                                value={rentalForm.expectedReturnDate}
+                                onChange={handleRentalChange}
+                                className={`p-2 w-full ${!rentalForm.dateRentedOut ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+                                min={rentalForm.dateRentedOut || undefined}
+                                disabled={!rentalForm.dateRentedOut}
+                            />
                         </div>
                     </div>
 
                     <div className='grid grid-cols-2 gap-4 pt-3'>
                         <div>
                             <label className='block'>Rate Per Day ($)</label>
-                            <input placeholder='25.00' name='rentalRatePerDay' value={rentalForm.rentalRatePerDay} onChange={handleRentalChange} className='p-2 w-full' />
+                            <input 
+                                type="number" 
+                                min="0" 
+                                step="0.01" 
+                                placeholder="0"
+                                name='rentalRatePerDay' 
+                                value={rentalForm.rentalRatePerDay || ''} 
+                                onChange={handleRentalChange} 
+                                className='p-2 w-full'
+                                onFocus={(e) => e.target.value === '0' && e.target.select()}
+                            />
                         </div>
                         <div>
                             <label className='block'>Actual Return</label>
-                            <input type='date' name='actualReturnDate' value={rentalForm.actualReturnDate} onChange={handleRentalChange} className='p-2 w-full' />
+                            <input
+                                type='date'
+                                name='actualReturnDate'
+                                value={rentalForm.actualReturnDate}
+                                onChange={handleRentalChange}
+                                className={`p-2 w-full ${!rentalForm.dateRentedOut ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+                                min={rentalForm.dateRentedOut || undefined}
+                                disabled={!rentalForm.dateRentedOut}
+                            />
                         </div>
                     </div>
 
@@ -426,12 +503,44 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
 
             {isAdd ? (
                 <div className='pt-6 text-center'>
-                    <button className='w-1/2 mx-auto bg-linear-65 from-[var(--primary)] to-[var(--muted)]' onClick={doSave} disabled={loading}>{isAdd ? '+ Add Car' : '💾 Save Changes'}</button>
+                    <button className='w-1/2 mx-auto bg-linear-65 from-[var(--primary)] to-[var(--muted)] flex items-center justify-center gap-2' onClick={doSave} disabled={loading}>
+                        {isAdd ? (
+                            <>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                                Add Car
+                            </>
+                        ) : (
+                            <>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                                    <polyline points="7 3 7 8 15 8"></polyline>
+                                </svg>
+                                Save Changes
+                            </>
+                        )}
+                    </button>
                 </div>
             ) : (
                 <div className='pt-6 grid grid-cols-2 gap-4'>
-                    <button className='w-full bg-linear-65 from-[var(--primary)] to-[var(--muted)]' onClick={doSave} disabled={loading}>💾 Save Changes</button>
-                    <button className='w-full btn-danger text-white' onClick={() => setShowDeleteConfirm(true)} disabled={loading}>🗑️ Delete Car</button>
+                    <button className='w-full bg-linear-65 from-[var(--primary)] to-[var(--muted)] flex items-center justify-center gap-2' onClick={doSave} disabled={loading}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                            <polyline points="7 3 7 8 15 8"></polyline>
+                        </svg>
+                        Save Changes
+                    </button>
+                    <button className='w-full btn-danger text-white flex items-center justify-center gap-2' onClick={() => setShowDeleteConfirm(true)} disabled={loading}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                        Delete Car
+                    </button>
                 </div>
             )}
 
@@ -440,7 +549,7 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
             </div>
             <ConfirmModal
                 isOpen={showDeleteConfirm}
-                title="Confirm delete"
+                title="Confirm Deletion"
                 message="Are you sure you want to delete this car and all associated rental records? This action cannot be undone."
                 onConfirm={doDelete}
                 onCancel={() => setShowDeleteConfirm(false)}

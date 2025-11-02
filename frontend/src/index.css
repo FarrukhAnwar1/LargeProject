@@ -4,6 +4,69 @@
     https://coolors.co/22577a-2d7d90-38a3a5-48b89f-57cc99-6cdd99-80ed99-a4f3b3-b6f6c0-c7f9cc
 */
 
+/* Date input styling */
+input[type="date"] {
+    position: relative;
+    padding-right: 35px !important;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2322577A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cline x1='16' y1='2' x2='16' y2='6'%3E%3C/line%3E%3Cline x1='8' y1='2' x2='8' y2='6'%3E%3C/line%3E%3Cline x1='3' y1='10' x2='21' y2='10'%3E%3C/line%3E%3C/svg%3E");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 20px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    position: absolute;
+    right: 4px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+input[type="date"]::-webkit-datetime-edit {
+    color: var(--text);
+    padding: 0 4px;
+}
+
+/* Calendar popup styling - these are browser specific */
+::-webkit-datetime-edit-fields-wrapper { padding: 0; }
+::-webkit-datetime-edit-text { color: var(--muted-text); padding: 0 2px; }
+::-webkit-datetime-edit-month-field,
+::-webkit-datetime-edit-day-field,
+::-webkit-datetime-edit-year-field { padding: 0 4px; }
+
+/* Disabled date input styling */
+input[type="date"]:disabled,
+input[type="date"]:disabled::-webkit-datetime-edit,
+input[type="date"]:disabled::-webkit-calendar-picker-indicator {
+    background-color: #f3f4f6 !important;
+    color: #9ca3af !important;
+    cursor: not-allowed !important;
+    opacity: 0.8 !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+}
+
+/* Firefox specific styles */
+@-moz-document url-prefix() {
+    input[type="date"] {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2322577A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cline x1='16' y1='2' x2='16' y2='6'%3E%3C/line%3E%3Cline x1='8' y1='2' x2='8' y2='6'%3E%3C/line%3E%3Cline x1='3' y1='10' x2='21' y2='10'%3E%3C/line%3E%3C/svg%3E");
+        background-position: right 4px center;
+        background-repeat: no-repeat;
+        background-size: 20px;
+    }
+    
+    input[type="date"]:disabled {
+        background-image: none;
+    }
+}
+
 @keyframes raise {
      0% {
           transform: translateY(0px);
@@ -190,3 +253,69 @@ button:focus-visible {
     width: 100vw;
     height: 100vh;
 }
+
+/* Tile carousel styles */
+.tile-carousel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.tile-arrow {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    min-width: 36px;
+    width: 36px;
+    height: 36px;
+    padding: 0px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    cursor: pointer;
+    flex: 0 0 auto;
+    z-index: 10;
+}
+/* viewport hides scrollbar and defines the visible area (3 tiles wide) */
+.tile-viewport {
+    overflow: hidden;
+    flex: 1 1 auto;
+}
+.tile-carousel .tile-arrow { pointer-events: auto; }
+.tile-track {
+    display: flex;
+    gap: 12px;
+    padding: 6px 4px;
+    will-change: transform;
+    transition: transform 200ms ease-out;
+}
+.tile-viewport {
+    /* add horizontal padding so tiles don't sit underneath the circular arrow buttons */
+    padding: 0 44px; /* leaves ~44px on each side for arrows */
+    box-sizing: border-box;
+}
+.tile-track { justify-content: center; }
+.tile-arrow-img {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+.tile-arrow { z-index: 20; }
+.tile {
+    flex: 0 0 calc(100% / 3);
+    box-sizing: border-box;
+    padding: 10px;
+    text-align: center;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    background: #fff;
+    cursor: pointer;
+    transition: all 200ms ease-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    will-change: transform, border-color, box-shadow;
+}
+.tile:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+.tile.selected { border-color: var(--primary); transform: translateY(-6px); box-shadow: 0 6px 18px rgba(34,87,122,0.12); }
+.tile-img { width: 64px; height: 64px; object-fit: contain; margin-bottom: 8px; }
+.tile-label { font-size: 0.95rem; color: var(--text); }

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { buildPath } from '../Path';
 
-function Signup(){
+function Signup() {
     const navigate = useNavigate();
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -23,9 +23,9 @@ function Signup(){
     }, []);
 
     const goToLogin = (event?: React.MouseEvent<HTMLButtonElement>) => {
-            event?.preventDefault();
-            navigate('/');
-    }
+        event?.preventDefault();
+        navigate('/');
+    };
 
     const handleSubmit = async (e?: React.FormEvent) => {
         e?.preventDefault();
@@ -80,16 +80,17 @@ function Signup(){
         } finally {
             setLoading(false);
         }
-    }
+    };
 
     return (
         <form className="card" id="loginDiv" onSubmit={handleSubmit}>
             <div className='text-center'>
                 <strong className='text-2xl font-bold'>Sign Up</strong>
             </div>
+
             <div className="flex">
                 <div className="login-input !w-[50%] mr-1 pt-4">
-                    <label className=''>First Name:</label>
+                    <label>First Name:</label>
                     <input
                         className='p-2'
                         type="text"
@@ -98,10 +99,10 @@ function Signup(){
                         placeholder="First Name"
                         value={firstName}
                         onChange={e => setFirstName(e.target.value)}
-                        />
+                    />
                 </div>
                 <div className="login-input !w-[50%] ml-1 pt-4">
-                    <label className=''>Last Name:</label>
+                    <label>Last Name:</label>
                     <input
                         className='p-2'
                         type="text"
@@ -110,36 +111,38 @@ function Signup(){
                         placeholder="Last Name"
                         value={lastName}
                         onChange={e => setLastName(e.target.value)}
-                        />
-                </div>
-            </div>
-            <div className="pt-4">
-                <div className="login-input !pb-0">
-                <label>Email:</label>
-                <br />
-                <input
-                    className="p-2"
-                    type="email"
-                    id="signupEmail"
-                    name="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
                     />
                 </div>
             </div>
+
             <div className="pt-4">
                 <div className="login-input !pb-0">
-                <label>Password:</label>
-                <br />
-                <input
-                    className="p-2"
-                    type="password"
-                    id="signupPassword"
-                    name="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
+                    <label>Email:</label>
+                    <br />
+                    <input
+                        className="p-2"
+                        type="email"
+                        id="signupEmail"
+                        name="email"
+                        placeholder="Email"
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
+                    />
+                </div>
+            </div>
+
+            <div className="pt-4">
+                <div className="login-input !pb-0">
+                    <label>Password:</label>
+                    <br />
+                    <input
+                        className="p-2"
+                        type="password"
+                        id="signupPassword"
+                        name="password"
+                        placeholder="Password"
+                        value={password}
+                        onChange={e => setPassword(e.target.value)}
                     />
                 </div>
             </div>
@@ -158,23 +161,48 @@ function Signup(){
                     type="submit"
                     id="registerButton"
                     disabled={loading}
-                >{loading ? 'Registering...' : 'Register Account'}</button>
+                >
+                    {loading ? 'Registering...' : 'Register Account'}
+                </button>
             </div>
-            <br/>
-            <div className='text-center '>
-                <span id="registerResult" className={`font-medium ${registeredSuccess ? 'text-[var(--success)]' : (message ? 'text-[var(--error-text)]' : '')}`}>{message}</span>
+
+            <br />
+
+            <div className='text-center'>
+                <span id="registerResult" className={`font-medium ${registeredSuccess ? 'text-[var(--success)]' : (message ? 'text-[var(--error-text)]' : '')}`}>
+                    {message}
+                </span>
                 {registeredSuccess && (
                     <div className='text-sm text-[var(--muted-text)] pt-2'>Redirecting to login in {countdown}s...</div>
                 )}
             </div>
-            <div className='text-center pt-4'>
-                <p className='font-medium'>Already have an account?</p>
-                <button
-                    className='!px-20 bg-linear-65 from-[var(--muted2)] to-[var(--muted)]'
-                    type="button"
-                    id="signupLinkButton"
-                    onClick={goToLogin}
-                >Log In</button>
+
+            {/* Log In + Download App Section */}
+            <div className='flex flex-col sm:flex-row justify-center items-center gap-8 pt-8'>
+                {/* Log In Section */}
+                <div className='flex flex-col items-center w-48'>
+                    <p className='font-medium text-center mb-2'>Already have an account?</p>
+                    <button
+                        className='w-full bg-linear-65 from-[var(--muted2)] to-[var(--muted)]'
+                        type="button"
+                        id="loginLinkButton"
+                        onClick={goToLogin}
+                    >
+                        Log In
+                    </button>
+                </div>
+
+                {/* Download App Section */}
+                <div className='flex flex-col items-center w-48'>
+                    <p className='font-medium text-center mb-2'>On mobile?</p>
+                    <button
+                        className='w-full bg-linear-65 from-[var(--muted2)] to-[var(--muted)]'
+                        type="button"
+                        onClick={() => window.open('https://yourappdownloadlink.com', '_blank')}
+                    >
+                        Download the App
+                    </button>
+                </div>
             </div>
         </form>
     );
