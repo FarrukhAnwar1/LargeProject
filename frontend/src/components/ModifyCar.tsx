@@ -15,7 +15,7 @@ type CarForm = {
     make: string;
     model: string;
     mileage: number;
-    registrationNumber: string;
+    vehicleIdentificationNumber: string;
     carType: string; // single select for simplicity
     rentalStatus: string;
     warningLightIndicators: { id: number; text: string; removing?: boolean }[];
@@ -33,7 +33,7 @@ type RentalForm = {
 };
 
 const emptyCar: CarForm = {
-    licensePlate: '', year: '', color: '', make: '', model: '', mileage: 0, registrationNumber: '', carType: 'sedan', rentalStatus: 'available', warningLightIndicators: []
+    licensePlate: '', year: '', color: '', make: '', model: '', mileage: 0, vehicleIdentificationNumber: '', carType: 'sedan', rentalStatus: 'available', warningLightIndicators: []
 };
 
 const emptyRental: RentalForm = {
@@ -97,7 +97,7 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
                             make: car.make ?? '',
                             model: car.model ?? '',
                             mileage: car.mileage != null ? Number(car.mileage) : 0,
-                            registrationNumber: car.registrationNumber ?? '',
+                            vehicleIdentificationNumber: car.vehicleIdentificationNumber ?? '',
                             carType: car.carType ?? 'sedan',
                             warningLightIndicators: Array.isArray(car.warningLightIndicators) ? car.warningLightIndicators : [],
                             rentalStatus: car.rentalStatus ?? 'available'
@@ -194,7 +194,7 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
         if (!carForm.make) errs.push('Make is required.');
         if (!carForm.model) errs.push('Model is required.');
         if (!carForm.color || carForm.color.trim().length === 0) errs.push('Color is required.');
-        if (!carForm.registrationNumber) errs.push('Registration number is required.');
+        if (!carForm.vehicleIdentificationNumber) errs.push('Vehicle identification number is required.');
         const mileageNum = carForm.mileage;
         if (Number.isNaN(mileageNum) || mileageNum < 0) errs.push('Mileage must be a non-negative number.');
 
@@ -225,7 +225,7 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
                 make: carForm.make.trim(),
                 model: carForm.model.trim(),
                 mileage: carForm.mileage,
-                registrationNumber: carForm.registrationNumber.trim(),
+                vehicleIdentificationNumber: carForm.vehicleIdentificationNumber.trim(),
                 carType: carForm.carType,
                 warningLightIndicators: carForm.warningLightIndicators.map(i => i.text),
                 rentalStatus: carForm.rentalStatus
@@ -356,8 +356,8 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
                     <input required placeholder='Black' name='color' value={carForm.color} onChange={handleCarChange} className='p-2 w-full' />
                 </div>
                 <div>
-                    <label className='block font-medium'>Registration Number</label>
-                    <input placeholder='ABC-D12' name='registrationNumber' value={carForm.registrationNumber} onChange={handleCarChange} className='p-2 w-full' />
+                    <label className='block font-medium'>Vehicle Identification Number</label>
+                    <input placeholder='1A2BC34567D890123' name='vehicleIdentificationNumber' value={carForm.vehicleIdentificationNumber} onChange={handleCarChange} className='p-2 w-full' />
                 </div>
             </div>
 

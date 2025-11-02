@@ -58,7 +58,7 @@ const carSchema = new mongoose.Schema({
     warningLightIndicators: [{
         type: String,
     }],
-    registrationNumber: {
+    vehicleIdentificationNumber: {
         type: String,
         required: true,
         trim: true,
