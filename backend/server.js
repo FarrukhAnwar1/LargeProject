@@ -4,6 +4,7 @@ dotenv.config();
 import express from "express";
 import authRoutes from "./src/routes/auth-route.js";
 import carRoutes from "./src/routes/carRoutes.js";
+import rentalRoutes from"./src/routes/rentalRoutes.js";
 import { connectDB } from "./src/config/db.js";
 
 connectDB();
@@ -27,6 +28,7 @@ app.use((req, res, next) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/car", carRoutes);
+app.use("/api/rental", rentalRoutes);
 
 app.get("/test", (req, res) => {
   res.json({ message: "Server is running" });
