@@ -34,11 +34,20 @@ input[type="date"]::-webkit-datetime-edit {
 }
 
 /* Calendar popup styling - these are browser specific */
-::-webkit-datetime-edit-fields-wrapper { padding: 0; }
-::-webkit-datetime-edit-text { color: var(--muted-text); padding: 0 2px; }
+::-webkit-datetime-edit-fields-wrapper {
+    padding: 0;
+}
+
+::-webkit-datetime-edit-text {
+    color: var(--muted-text);
+    padding: 0 2px;
+}
+
 ::-webkit-datetime-edit-month-field,
 ::-webkit-datetime-edit-day-field,
-::-webkit-datetime-edit-year-field { padding: 0 4px; }
+::-webkit-datetime-edit-year-field {
+    padding: 0 4px;
+}
 
 /* Disabled date input styling */
 input[type="date"]:disabled,
@@ -61,19 +70,20 @@ input[type="date"]:disabled::-webkit-calendar-picker-indicator {
         background-repeat: no-repeat;
         background-size: 20px;
     }
-    
+
     input[type="date"]:disabled {
         background-image: none;
     }
 }
 
 @keyframes raise {
-     0% {
-          transform: translateY(0px);
-     }
-     100% {
-          transform: translateY(-2.5px);
-     }
+    0% {
+        transform: translateY(0px);
+    }
+
+    100% {
+        transform: translateY(-2.5px);
+    }
 }
 
 :root {
@@ -90,7 +100,8 @@ input[type="date"]:disabled::-webkit-calendar-picker-indicator {
     --primary: #22577A;
     --primary-text: #ffffff;
     --error-text: #ca0000;
-    --success: #1e7a3a; /* dark green for success messages/buttons */
+    --success: #1e7a3a;
+    /* dark green for success messages/buttons */
     --shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 
     font-family: ui-sans-serif, system-ui, Segoe UI, Roboto, Arial;
@@ -141,10 +152,12 @@ input {
 }
 
 .fancy-select {
-    border: 1px solid #cbd5e1; /* light gray so it doesn't blend into white */
+    border: 1px solid #cbd5e1;
+    /* light gray so it doesn't blend into white */
     border-radius: 10px;
     background: #fff;
-    padding-right: 2.25rem; /* room for arrow */
+    padding-right: 2.25rem;
+    /* room for arrow */
 }
 
 /* Notes textarea: keep a visible outline even when unfocused so it's easy to spot */
@@ -154,17 +167,19 @@ input {
     background: #fff;
     box-shadow: none;
 }
+
 .notes-textarea:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(34,87,122,0.08);
+    box-shadow: 0 0 0 3px rgba(34, 87, 122, 0.08);
 }
 
 /* Danger button that uses the --error-text variable for background */
 .btn-danger {
     background: var(--error-text);
     color: #fff;
-    border: 1px solid rgba(0,0,0,0.06);
+    border: 1px solid rgba(0, 0, 0, 0.06);
 }
+
 .btn-danger:hover {
     filter: brightness(0.95);
 }
@@ -180,9 +195,11 @@ input {
     align-items: center;
     padding: 3px;
 }
+
 .toggle-switch.on {
     background: linear-gradient(65deg, var(--muted2), var(--muted));
 }
+
 .toggle-thumb {
     width: 18px;
     height: 18px;
@@ -191,6 +208,7 @@ input {
     display: block;
     transition: transform 180ms ease;
 }
+
 .toggle-switch.on .toggle-thumb {
     transform: translateX(18px);
 }
@@ -199,14 +217,17 @@ input {
     opacity: 0;
     transform: scale(.98);
 }
+
 .warning-item-enter-active {
     opacity: 1;
     transform: scale(1);
     transition: opacity 200ms, transform 200ms;
 }
+
 .warning-item-exit {
     opacity: 1;
 }
+
 .warning-item-exit-active {
     opacity: 0;
     transform: scale(.98);
@@ -260,6 +281,7 @@ button:focus-visible {
     align-items: center;
     gap: 8px;
 }
+
 .tile-arrow {
     background: #ffffff;
     border: 1px solid #e0e0e0;
@@ -275,12 +297,17 @@ button:focus-visible {
     flex: 0 0 auto;
     z-index: 10;
 }
+
 /* viewport hides scrollbar and defines the visible area (3 tiles wide) */
 .tile-viewport {
     overflow: hidden;
     flex: 1 1 auto;
 }
-.tile-carousel .tile-arrow { pointer-events: auto; }
+
+.tile-carousel .tile-arrow {
+    pointer-events: auto;
+}
+
 .tile-track {
     display: flex;
     gap: 12px;
@@ -288,18 +315,29 @@ button:focus-visible {
     will-change: transform;
     transition: transform 200ms ease-out;
 }
+
 .tile-viewport {
     /* add horizontal padding so tiles don't sit underneath the circular arrow buttons */
-    padding: 0 44px; /* leaves ~44px on each side for arrows */
+    padding: 0 44px;
+    /* leaves ~44px on each side for arrows */
     box-sizing: border-box;
 }
-.tile-track { justify-content: center; }
+
+.tile-track {
+    justify-content: center;
+}
+
 .tile-arrow-img {
     width: 100%;
     height: 100%;
     display: block;
 }
-.tile-arrow { z-index: 20; }
+
+.tile-arrow {
+    z-index: 5;
+}
+
+/* Reduced z-index to prevent overlap with navbar */
 .tile {
     flex: 0 0 calc(100% / 3);
     box-sizing: border-box;
@@ -315,7 +353,26 @@ button:focus-visible {
     align-items: center;
     will-change: transform, border-color, box-shadow;
 }
-.tile:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
-.tile.selected { border-color: var(--primary); transform: translateY(-6px); box-shadow: 0 6px 18px rgba(34,87,122,0.12); }
-.tile-img { width: 64px; height: 64px; object-fit: contain; margin-bottom: 8px; }
-.tile-label { font-size: 0.95rem; color: var(--text); }
+
+.tile:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow);
+}
+
+.tile.selected {
+    border-color: var(--primary);
+    transform: translateY(-6px);
+    box-shadow: 0 6px 18px rgba(34, 87, 122, 0.12);
+}
+
+.tile-img {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    margin-bottom: 8px;
+}
+
+.tile-label {
+    font-size: 0.95rem;
+    color: var(--text);
+}

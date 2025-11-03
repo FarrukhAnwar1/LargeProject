@@ -17,10 +17,19 @@ const TileCarousel = ({
     const [scrollIndex, setScrollIndex] = useState(0);
     const [tempValue, setTempValue] = useState(value);
 
-    // Sync tempValue with external value changes
+    // Sync tempValue with external value changes and handle initial scroll position
     useEffect(() => {
         setTempValue(value);
-    }, [value]);
+        
+        // Find the index of the selected value
+        const selectedIndex = options.findIndex(opt => opt.id === value);
+        if (selectedIndex >= 0) {
+            // Calculate appropriate scroll position to show the selected item
+            if (selectedIndex >= 3) {
+                setScrollIndex(Math.min(selectedIndex - 1, options.length - 3));
+            }
+        }
+    }, [value, options]);
 
     const goLeft = () => {
         const currentSelectedIndex = options.findIndex(opt => opt.id === value);

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
-import { buildPath } from '../Path';
+import { buildPath } from '../utils/Path';
 
 type VerificationProps = {
     verificationToken?: string;

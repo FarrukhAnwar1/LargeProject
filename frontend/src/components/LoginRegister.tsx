@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { buildPath } from '../Path';
+import { buildPath } from '../utils/Path';
 import { useNavigate } from 'react-router-dom';
 import axios, { AxiosError } from 'axios';
-// import { storeToken } from '../TokenStorage';
+// import { storeToken } from '../utils/TokenStorage';
 // import { jwtDecode } from 'jwt-decode';
 // import { type TokenPayload } from '../Types';
 

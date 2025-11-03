@@ -1,46 +1,24 @@
 import React, { useState } from 'react';
-import { buildPath } from '../Path';
-import { retrieveToken, storeToken } from '../TokenStorage';
+import { buildPath } from '../utils/Path';
+import { retrieveToken, storeToken } from '../utils/TokenStorage';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 function CarsUI() {
-    const [message, setMessage] = useState('');
+    const navigate = useNavigate();
+    const [message, ] = useState('');
     const [searchResults, setResults] = useState('');
     const [cardList, setCardList] = useState('');
     const [search, setSearchValue] = React.useState('');
-    const [card, setCardNameValue] = React.useState('');
     // Currently commented out since JWT is not returned to frontend and is only stored as a cookie
     // const _ud = localStorage.getItem('user_data');
     // const ud = JSON.parse(String(_ud));
     // const userId = ud.userId;
     
-    async function addCard(e: React.MouseEvent<HTMLButtonElement>): Promise<void> {
+    async function addCar(e: React.MouseEvent<HTMLButtonElement>): Promise<void> {
         e.preventDefault();
-        const obj = { card: card, jwtToken: retrieveToken() };
-        const js = JSON.stringify(obj);
-        const config = {
-            method: 'post',
-            url: buildPath('api/addcard'),
-            headers:
-            {
-                'Content-Type': 'application/json'
-            },
-            data: js
-        };
-        axios(config).then(function (response) {
-            const res = response.data;
-            if (res.error.length > 0) {
-                setMessage("API Error:" + res.error);
-            }
-            else {
-                setMessage('Card has been added');
-                storeToken(res.jwtToken);
-                setCardNameValue('');
-                (document.getElementById('cardText') as HTMLInputElement).value = '';
-            }
-        }).catch(function (error) {
-            setMessage(error.toString());
-        });
+        navigate('/cars/add');
     };
+
     async function searchCard(e: React.MouseEvent<HTMLButtonElement>): Promise<void> {
         e.preventDefault();
         const obj = { search: search, jwtToken: retrieveToken() };
@@ -75,9 +53,6 @@ function CarsUI() {
     function handleSearchTextChange(e: React.ChangeEvent<HTMLInputElement>): void {
         setSearchValue(e.target.value);
     }
-    function handleCardTextChange(e: React.ChangeEvent<HTMLInputElement>): void {
-        setCardNameValue(e.target.value);
-    }
     return (
         <div id="cardUIDiv">
             <br />
@@ -87,11 +62,9 @@ function CarsUI() {
                 onClick={searchCard}> Search Card</button><br />
             <span id="cardSearchResult">{searchResults}</span>
             <p id="cardList">{cardList}</p><br /><br />
-            Add: <input type="text" id="cardText" placeholder="Card To Add"
-                onChange={handleCardTextChange} />
-            <button type="button" id="addCardButton"
-                onClick={addCard}> Add Card </button><br />
-            <span id="cardAddResult">{message}</span>
+            <button type="button" id="addCarButton"
+                onClick={addCar}> Add Car </button><br />
+            <span id="carAddResult">{message}</span>
         </div>
     );
 }

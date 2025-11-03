@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { buildPath } from '../Path';
+import { buildPath } from '../utils/Path';
 
 function Signup() {
     const navigate = useNavigate();

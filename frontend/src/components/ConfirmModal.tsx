@@ -2,8 +2,8 @@ import React from 'react';
 
 type ConfirmModalProps = {
     isOpen: boolean;
-    title?: string;
-    message?: string;
+    title?: React.ReactNode;
+    message?: React.ReactNode;
     children?: React.ReactNode;
     onConfirm: () => void;
     onCancel?: () => void;
@@ -11,6 +11,7 @@ type ConfirmModalProps = {
     cancelLabel?: string;
     danger?: boolean;
     showCancel?: boolean;
+    footer?: React.ReactNode;
 };
 
 const ConfirmModal = ({
@@ -24,6 +25,7 @@ const ConfirmModal = ({
     cancelLabel = 'Cancel',
     danger = false,
     showCancel = true,
+    footer,
 }: ConfirmModalProps) => {
     if (!isOpen) return null;
 
@@ -35,6 +37,7 @@ const ConfirmModal = ({
                     {title && <div className="text-xl font-bold mb-2">{title}</div>}
                     {message && <div className="mb-4 text-sm text-gray-700">{message}</div>}
                     {children}
+                    {footer}
 
                     <div className="mt-4 flex justify-end gap-3">
                         {showCancel && (
