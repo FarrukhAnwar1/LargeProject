@@ -12,20 +12,6 @@ type ModifyCarProps = {
     carId?: string; // pass 'add' to create a new car
 };
 
-type Car = {
-    _id: string;
-    licensePlate: string;
-    year: number;
-    color: string;
-    make: string;
-    model: string;
-    mileage: number;
-    vehicleIdentificationNumber: string;
-    carType: string;
-    rentalStatus: string;
-    warningLightIndicators: string[];
-};
-
 type CarForm = {
     licensePlate: string;
     year: string;
@@ -125,16 +111,32 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
         }
     }, [showSuccessModal, navigate]);
 
+    // Define the Car type at the top level
+    interface Car {
+        _id: string;
+        licensePlate: string;
+        year: number;
+        color: string;
+        make: string;
+        model: string;
+        mileage: number;
+        vehicleIdentificationNumber: string;
+        carType: string;
+        rentalStatus: string;
+        warningLightIndicators: string[];
+    }
+
     useEffect(() => {
         if (!isAdd && carId) {
             // Placeholder: fetch car and its current rental (if any)
             (async () => {
                 setLoading(true);
                 try {
-                    // Get car details from GET /api/car
-                    const carRes = await axios.get(buildPath('api/car'));
-                    const car = carRes.data?.cars?.find((c: Car) => c._id === carId);
+                    // Get car details from GET /api/car (gets all cars)
+                    const carRes = await axios.get<{success: boolean; cars: Car[]}>(buildPath('api/car'));
+                    const car = carRes.data?.cars?.find(c => c._id === carId);
                     if (car) {
+                        console.log('Found car:', car); // Debug log
                         setCarForm({
                             licensePlate: car.licensePlate ?? '',
                             year: car.year?.toString() ?? '',
@@ -147,6 +149,9 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
                             warningLightIndicators: Array.isArray(car.warningLightIndicators) ? car.warningLightIndicators.map((text: string) => ({ id: Date.now() + Math.random(), text })) : [],
                             rentalStatus: car.rentalStatus ?? 'available'
                         });
+                    } else {
+                        console.error('Car not found with ID:', carId);
+                        setMessage('Car not found.');
                     }
 
                     // Get rental info from GET /api/rental/:carID
@@ -156,12 +161,12 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
                         console.log('Rental response:', rentRes.data); // Debug log
                         
                         const rentals = rentRes.data?.rentals;
-                        // Get the current rental (one without an actual return date)
-                        const currentRental = Array.isArray(rentals) ? 
-                            rentals.find(r => !r.actualReturnDate) : null;
+                        // Get the most recent rental
+                        const currentRental = Array.isArray(rentals) && rentals.length > 0 ? 
+                            rentals[0] : null; // rentals are already sorted by dateRentedOut DESC
                             
                         if (currentRental) {
-                            console.log('Found current rental:', currentRental); // Debug log
+                            console.log('Found rental:', currentRental); // Debug log
                             setRentalForm({
                                 renterName: currentRental.renterName ?? '',
                                 renterEmail: currentRental.renterEmail ?? '',
@@ -169,7 +174,7 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
                                 dateRentedOut: currentRental.dateRentedOut ? new Date(currentRental.dateRentedOut).toISOString().slice(0, 10) : '',
                                 expectedReturnDate: currentRental.expectedReturnDate ? new Date(currentRental.expectedReturnDate).toISOString().slice(0, 10) : '',
                                 actualReturnDate: currentRental.actualReturnDate ? new Date(currentRental.actualReturnDate).toISOString().slice(0, 10) : '',
-                                rentalRatePerDay: typeof currentRental.rentalRatePerDay === 'number' ? currentRental.rentalRatePerDay : 0,
+                                rentalRatePerDay: Number(currentRental.rentalRatePerDay) || 0,
                                 notes: currentRental.notes ?? '',
                                 _id: currentRental._id // Store the rental ID for updates
                             });
@@ -240,7 +245,6 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
         }
 
         if (name === 'rentalRatePerDay') {
-            // Handle rental rate input
             const n = value === '' ? 0 : Number(value);
             if (!Number.isNaN(n) && n >= 0) { // Ensure non-negative
                 setRentalField(name, n);
@@ -248,13 +252,8 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
             return;
         }
 
-        if (name === 'actualReturnDate') {
-            // If actualReturnDate is empty string, set it to undefined to remove from backend
-            setRentalField(name, value === '' ? undefined : value);
-            return;
-        }
-
-        setRentalField(name, value as unknown as RentalForm[typeof name]);
+        // Handle all string values consistently
+        setRentalField(name, value as RentalForm[typeof name]);
     };
 
     const validate = (): boolean => {
@@ -403,12 +402,23 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
         setLoading(true);
         setMessage('');
         try {
-            // DELETE car (this will also delete associated rentals in the backend)
+            // First delete all rentals associated with this car
+            try {
+                await axios.delete(buildPath(`api/rental/car/${carId}`));
+                console.log('Successfully deleted all rentals for car:', carId);
+            } catch (err) {
+                // Ignore 404 errors (no rentals found)
+                if (!(err instanceof AxiosError) || err.response?.status !== 404) {
+                    throw err;
+                }
+            }
+
+            // Then delete the car
             await axios.delete(buildPath(`api/car/${carId}`));
             setMessage('Car and associated rentals deleted.');
             setShowSuccessModal(true);
         } catch (err) {
-            console.error(err);
+            console.error('Error during deletion:', err);
             if (err instanceof AxiosError && err?.response?.data?.message) setMessage(err.response.data.message);
             else setMessage('Failed to delete car.');
         } finally {

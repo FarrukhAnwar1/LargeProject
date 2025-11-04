@@ -3,7 +3,17 @@ import Car from '../../models/car.js';
 
 export const addRental = async(req,res)=> {
     try{
-        const{carID, renterName, renterEmail, renterPhone, dateRentedOut, expectedReturnDate, rentalRatePerDay, notes} = req.body;
+        const{
+            carID, 
+            renterName, 
+            renterEmail, 
+            renterPhone, 
+            dateRentedOut, 
+            expectedReturnDate, 
+            actualReturnDate,
+            rentalRatePerDay, 
+            notes
+        } = req.body;
 
         // Validate required fields individually for better error messages
         const errors = [];
@@ -35,7 +45,8 @@ export const addRental = async(req,res)=> {
             renterPhone: renterPhone || "",
             dateRentedOut,
             expectedReturnDate,
-            rentalRatePerDay,
+            actualReturnDate: actualReturnDate || undefined,
+            rentalRatePerDay: Number(rentalRatePerDay),
             totalCost: 0,
             notes: notes || "",
         });
