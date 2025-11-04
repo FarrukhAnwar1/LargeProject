@@ -11,7 +11,7 @@ export const sendVerificationEmail = async (email, verificationToken) => {
       from: "CarStax <noreply@farrukhanwar.site>",
       to: [email],
       subject: "CarStax E-mail Verification",
-      html: verificationTokenEmailTemplate.replace("{verificationToken}", buildPath(`verify/${verificationToken}`)),
+      html: verificationTokenEmailTemplate.replace("{verificationLink}", buildPath(`verify/${verificationToken}`)),
     });
 
     if (error) {
