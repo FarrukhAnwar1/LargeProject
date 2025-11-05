@@ -38,16 +38,16 @@ export const signup = async (req, res) => {
         
         await user.save();
 
-        try {
+        await sendVerificationEmail(user.email, verificationToken);
+
+         try {
             generateJWTToken(res, user._id );
             console.log("Token successfully made");
             
         } catch(err) {
             console.error("JWT token generation failed:", err);
         }
-
-        await sendVerificationEmail(user.email, verificationToken);
-
+        
         res.status(201).json({
             success: true,
             user: {
@@ -100,10 +100,10 @@ export const logout = (req, res) => {
 };
 
 export const verifyEmail = async (req, res) => {
-    const{code} = req.body;
+    const{token} = req.params;
     try{
         const user = await User.findOne({
-            verificationToken: code,
+            verificationToken: token,
             verificationTokenExpiresAt: {$gt: Date.now() },
 
         })
@@ -115,7 +115,7 @@ export const verifyEmail = async (req, res) => {
         user.verificationTokenExpiresAt = undefined;
         await user.save();
 
-        await sendWelcomeEmail(user.email, user.name);
+        await sendWelcomeEmail(user.email, user.firstName || user.email);
 
         res.status(200).json({success: true, message: "Email verified successfully"});
     }catch(error){
