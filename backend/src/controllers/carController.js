@@ -76,7 +76,7 @@ export const deleteCar = async(req, res) => {
             if(car.companyName !== user.companyName){
                             return res.status(403).json({success: false, message: "Access Denied to Delete. Company cars only."});
             }
-        }else if (String (car.userID) !== String(user._id)){ //if a car has no company name, it checks based on ID
+        }else if ( car.userID.toString() !== String(user._id)){ //if a car has no company name, it checks based on ID
             return res.status(403).json({success: false, message: "Access Denied to Delete. Personal cars only."});
         }
 
