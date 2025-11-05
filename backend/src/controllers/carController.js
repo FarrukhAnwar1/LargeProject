@@ -24,7 +24,7 @@ export const addCar = async (req, res) => {
         //add the car data
         const car = new Car({
             userID: user._id,
-            companyName: user.companyName,
+            companyName: user.companyName !== "N/A" ? user.companyName : "N/A",
             licensePlate,
             year,
             color,
@@ -71,9 +71,13 @@ export const deleteCar = async(req, res) => {
         }
 
 
-        //find the company and compare
-        if(user.companyName !== car.companyName){
-            return res.status(403).json({success: false, message: "You don't have permission to delete this car"});
+        //Sees if the user has a company and a user, and isn't N/A
+        if(user.companyName !== "N/A"){
+            if(car.companyName !== user.companyName){
+                            return res.status(403).json({success: false, message: "Access Denied to Delete. Company cars only."});
+            }
+        }else if (String (car.userID) !== String(user._id)){ //if a car has no company name, it checks based on ID
+            return res.status(403).json({success: false, message: "Access Denied to Delete. Personal cars only."});
         }
 
         await Car.findByIdAndDelete(carId);
@@ -98,8 +102,13 @@ export const editCar = async (req, res) => {
         if(!car) return res.status(404).json({success:false, message: "Car not found"});
          
         //extra protection to make sure outside of users of company can't edit car
-        if(car.companyName !== user.companyName) return res.status(403).json({success: false, message: "Access Denied "});
-    
+        if(user.companyName !== "N/A"){
+            if(car.companyName !== user.companyName){
+                            return res.status(403).json({success: false, message: "Access Denied to Edit. Company cars only."});
+            }
+        }else if (String (car.userID) !== String(user._id)){ //if a car has no company name, it checks based on ID
+            return res.status(403).json({success: false, message: "Access Denied to Edit. Personal cars only."});
+        }
 
     const fieldsUpdate = [
         "licensePlate",
@@ -141,7 +150,15 @@ export const getCars = async(req, res)=> {
         if(!user) return res.status(404).json({success: false, message: "User not found"});
 
 
-        let query = {companyName: user.companyName};
+        let query = {};
+
+        //if company name "N/A" return cars of user only
+        //else return all the cars of that company
+        if(user.companyName === "N/A"){
+            query.userID = user._id;
+        }else{
+            query.companyName = user.companyName;
+        }
 
         //If we want to add filtering in our searches:
         if(req.query.rentalStatus) query.rentalStatus = req.query.rentalStatus;
