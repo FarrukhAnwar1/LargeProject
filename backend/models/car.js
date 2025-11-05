@@ -8,6 +8,10 @@ const carSchema = new mongoose.Schema({
         required: true,
         index: true,
     },
+    companyName: {
+        type:String,
+        default: "N/A"
+    },
     // Unique license plate number
     licensePlate: {
         type: String,
