@@ -10,8 +10,8 @@ export const sendVerificationEmail = async (email, verificationToken) => {
     const { data, error } = await resend.emails.send({
       from: "CarStax <noreply@farrukhanwar.site>",
       to: [email],
-      subject: "CarStax E-mail Verification",
-      html: verificationTokenEmailTemplate.replace("{verificationLink}", buildPath(`verify/${verificationToken}`)),
+      subject: "CarStax Email Verification",
+      html: verificationTokenEmailTemplate.replaceAll("{verificationLink}", buildPath(`verify/${verificationToken}`)),
     });
 
     if (error) {
