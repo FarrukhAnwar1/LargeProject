@@ -1,14 +1,14 @@
 //From REACT email, can be changed
-export const verificationTokenEmailTemplate = 
-`<!DOCTYPE html>
+export const verificationTokenEmailTemplate = `<!DOCTYPE html>
 <html dir="ltr" lang="en">
   <head>
-    <link rel="preload"
-    as="image"
-    href="https://react-email-demo-c7nq3pwx3-resend.vercel.app/static/plaid-logo.png" />
+    <link 
+      rel="preload"
+      as="image"
+      href="https://react-email-demo-c7nq3pwx3-resend.vercel.app/static/plaid-logo.png" 
+    />
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
     <meta name="x-apple-disable-message-reformatting" />
-    <!--$-->
   </head>
   <body style="background-color:#ffffff">
     <table 
@@ -75,42 +75,38 @@ export const verificationTokenEmailTemplate =
 
                   <!--verification text-->
                   <p
-                  style="font-size:14px;line-height:20px;color:#444;font-family:HelveticaNeue,Helvetica,Arial,sans-serif;text-align:center;padding 0 20px;">
-                  If the button doesn't work, click this link:
+                  style="font-size:14px;line-height:20px;color:#444;font-family:HelveticaNeue,Helvetica,Arial,sans-serif;text-align:center;padding: 0 20px;">
+                  If the button doesn't work, click or manually enter this link:
                   <br/>
                   <a href="{verificationLink}" style="color:#22577A;">
                   {verificationLink}
                   </a>
-                </p>
+                  </p>
 
-                <p
-                style="font-size:15px;line-height:23px;color:#444;font-family:HelveticaNeue,Helvetica,Arial,sans-serif;text-align:center;padding 0 40px;margin 16px 0 0 0;">
-                Not expecting this email? Contact
-                <a
-                  href="mailto:noreply@farrukhanwar.site"
-                  style="color:#444;text-decoration:underline"
-                  target="_blank">
-                  noreply@farrukhanwar.site
+                  <p
+                  style="font-size:15px;line-height:23px;color:#444;font-family:HelveticaNeue,Helvetica,Arial,sans-serif;text-align:center;padding: 0 40px;margin: 16px 0 0 0;">
+                  Not expecting this email? Contact
+                  <a
+                    href="mailto:noreply@farrukhanwar.site"
+                    style="color:#444;text-decoration:underline"
+                    target="_blank">
+                    noreply@farrukhanwar.site
                   </a>
-                </p>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      <p
-        style="font-size:12px;line-height:23px;color:#fff;font-weight:800;letter-spacing:0;margin:20px 0;font-family:HelveticaNeue,Helvetica,Arial,sans-serif;text-align;text-transform:uppercase;">
-        Sent to you by CarStax.
-      </p>
-    </td>
-  </tr>
-</tbody>
-</table>
+                  </p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+              <p
+            style="font-size:12px;line-height:23px;color:#fff;font-weight:800;letter-spacing:0;margin:20px 0;font-family:HelveticaNeue,Helvetica,Arial,sans-serif;text-align:center;text-transform:uppercase;">
+            Sent to you by CarStax.
+          </p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </body>
-</html>
-
-
-
-
+</html>`;
 
 export const WELCOME_EMAIL_TEMPLATE = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html dir="ltr" lang="en">

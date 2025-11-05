@@ -31,7 +31,7 @@ const Verification = ({ verificationToken }: VerificationProps) => {
             setLoading(true);
             setMessage('Verifying your email...');
             try {
-                const res = await axios.post(buildPath('api/auth/verify-email'), { code: token }, { headers: { 'Content-Type': 'application/json' } });
+                const res = await axios.post(buildPath('api/auth/verify'), { code: token }, { headers: { 'Content-Type': 'application/json' } });
                 if (res?.data?.success) {
                     setMessage(res.data.message || 'Email verified successfully.');
                     setVerified(true);
