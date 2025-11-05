@@ -25,20 +25,35 @@ const Verification = ({ verificationToken }: VerificationProps) => {
             return;
         }
 
+        const abortController = new AbortController();
         let intervalId: ReturnType<typeof setInterval> | null = null;
+        let isSubscribed = true; // Track if the component is mounted
 
-        (async () => {
+        const verifyEmail = async () => {
+            if (!isSubscribed) return; // Don't proceed if unmounted
             setLoading(true);
             setMessage('Verifying your email...');
+            
             try {
-                const res = await axios.post(buildPath('api/auth/verify'), { code: token }, { headers: { 'Content-Type': 'application/json' } });
+                const res = await axios.get(
+                    buildPath(`api/auth/verify/${token}`), 
+                    { 
+                        headers: { 'Content-Type': 'application/json' },
+                        signal: abortController.signal 
+                    }
+                );
+                
+                if (!isSubscribed) return; // Don't update state if unmounted
+
                 if (res?.data?.success) {
                     setMessage(res.data.message || 'Email verified successfully.');
                     setVerified(true);
                     setCountdown(5);
-                    // start countdown to redirect
+                    
+                    // Start countdown to redirect
                     let t = 5;
                     intervalId = setInterval(() => {
+                        if (!isSubscribed) return; // Don't update if unmounted
                         t -= 1;
                         setCountdown(t);
                         if (t <= 0) {
@@ -50,6 +65,13 @@ const Verification = ({ verificationToken }: VerificationProps) => {
                     setMessage(res?.data?.message || 'Verification failed.');
                 }
             } catch (err: unknown) {
+                if (!isSubscribed) return; // Don't update state if unmounted
+                
+                // Ignore aborted requests
+                if (axios.isAxiosError(err) && err.code === 'ERR_CANCELED') {
+                    return;
+                }
+
                 console.error('Verification error:', err);
                 let errMsg = 'Verification failed due to an error.';
                 if (axios.isAxiosError(err)) {
@@ -60,11 +82,18 @@ const Verification = ({ verificationToken }: VerificationProps) => {
                 }
                 setMessage(errMsg);
             } finally {
-                setLoading(false);
+                if (isSubscribed) { // Only update if still mounted
+                    setLoading(false);
+                }
             }
-        })();
+        };
 
+        verifyEmail();
+
+        // Cleanup function
         return () => {
+            isSubscribed = false; // Mark as unmounted
+            abortController.abort(); // Cancel any in-flight request
             if (intervalId) clearInterval(intervalId);
         };
     }, [token, navigate]);
