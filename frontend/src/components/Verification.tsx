@@ -1,126 +1,170 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import { buildPath } from '../utils/Path';
 
 type VerificationProps = {
     verificationToken?: string;
+    type?: string;
 };
 
-const Verification = ({ verificationToken }: VerificationProps) => {
+// Module-level cache to prevent duplicate requests across component remounts
+type VerificationResponse = {
+    data?: {
+        success?: boolean;
+        message?: string;
+    };
+};
+
+const verificationCache = new Map<string, Promise<VerificationResponse>>();
+
+const Verification = ({ verificationToken, type = 'email' }: VerificationProps) => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
-    const [message, setMessage] = useState<string>('Verifying...');
-    const [loading, setLoading] = useState<boolean>(true);
-    const [verified, setVerified] = useState<boolean>(false);
-    const [countdown, setCountdown] = useState<number>(5);
 
+    const [message, setMessage] = useState('Verifying...');
+    const [loading, setLoading] = useState(true);
+    const [verified, setVerified] = useState(false);
+    const [countdown, setCountdown] = useState(5);
+
+    // Derive token/type from query or props
     const tokenFromQuery = searchParams.get('code') || searchParams.get('token');
-    const token = verificationToken || tokenFromQuery;
+    const typeFromQuery = searchParams.get('type');
+    const token = verificationToken || tokenFromQuery || '';
+    const verificationType = typeFromQuery || type;
+
+    const mountedRef = useRef(true);
 
     useEffect(() => {
+        mountedRef.current = true;
+
         if (!token) {
             setMessage('No verification token provided.');
             setLoading(false);
             return;
         }
 
-        const abortController = new AbortController();
-        let intervalId: ReturnType<typeof setInterval> | null = null;
-        let isSubscribed = true; // Track if the component is mounted
+        const cacheKey = `${token}-${verificationType}`;
 
         const verifyEmail = async () => {
-            if (!isSubscribed) return; // Don't proceed if unmounted
             setLoading(true);
-            setMessage('Verifying your email...');
-            
+            setMessage(
+                verificationType === 'admin'
+                    ? 'Verifying company member...'
+                    : 'Verifying your email...'
+            );
+
             try {
-                const res = await axios.get(
-                    buildPath(`api/auth/verify/${token}`), 
-                    { 
-                        headers: { 'Content-Type': 'application/json' },
-                        signal: abortController.signal 
-                    }
-                );
-                
-                if (!isSubscribed) return; // Don't update state if unmounted
+                // Check if we already have a pending request for this token
+                let requestPromise = verificationCache.get(cacheKey);
+
+                if (!requestPromise) {
+                    // Create new request and cache it
+                    requestPromise = axios.get(
+                        buildPath(`api/auth/verify/${token}?type=${verificationType}`),
+                        {
+                            headers: { 'Content-Type': 'application/json' },
+                        }
+                    );
+                    verificationCache.set(cacheKey, requestPromise);
+
+                    // Clear cache after request completes (success or failure)
+                    requestPromise.finally(() => {
+                        // Small delay to allow second mount to reuse the promise
+                        setTimeout(() => verificationCache.delete(cacheKey), 100);
+                    });
+                }
+
+                // Await the cached promise
+                const res = await requestPromise;
+
+                // Don't update state if component unmounted
+                if (!mountedRef.current) return;
 
                 if (res?.data?.success) {
                     setMessage(res.data.message || 'Email verified successfully.');
                     setVerified(true);
-                    setCountdown(5);
-                    
-                    // Start countdown to redirect
-                    let t = 5;
-                    intervalId = setInterval(() => {
-                        if (!isSubscribed) return; // Don't update if unmounted
-                        t -= 1;
-                        setCountdown(t);
-                        if (t <= 0) {
-                            if (intervalId) clearInterval(intervalId);
-                            navigate('/');
-                        }
-                    }, 1000);
+                    setLoading(false);
                 } else {
                     setMessage(res?.data?.message || 'Verification failed.');
+                    setLoading(false);
                 }
             } catch (err: unknown) {
-                if (!isSubscribed) return; // Don't update state if unmounted
-                
-                // Ignore aborted requests
-                if (axios.isAxiosError(err) && err.code === 'ERR_CANCELED') {
-                    return;
-                }
+                // Don't update state if component unmounted
+                if (!mountedRef.current) return;
 
                 console.error('Verification error:', err);
                 let errMsg = 'Verification failed due to an error.';
+
                 if (axios.isAxiosError(err)) {
-                    type Resp = { data?: { message?: string } };
-                    errMsg = (err.response as Resp)?.data?.message || err.message || errMsg;
+                    errMsg = err.response?.data?.message || err.message || errMsg;
                 } else if (err instanceof Error) {
                     errMsg = err.message;
                 }
+
                 setMessage(errMsg);
-            } finally {
-                if (isSubscribed) { // Only update if still mounted
-                    setLoading(false);
-                }
+                setLoading(false);
             }
         };
 
         verifyEmail();
 
-        // Cleanup function
         return () => {
-            isSubscribed = false; // Mark as unmounted
-            abortController.abort(); // Cancel any in-flight request
-            if (intervalId) clearInterval(intervalId);
+            mountedRef.current = false;
         };
-    }, [token, navigate]);
+    }, [token, verificationType]);
 
-    const msgClass = !loading ? (verified ? 'text-[var(--success)]' : 'text-[var(--error-text)]') : '';
+    // Separate effect for countdown and redirect
+    useEffect(() => {
+        if (!verified) return;
+
+        setCountdown(5);
+        let timeLeft = 5;
+
+        const intervalId = setInterval(() => {
+            timeLeft -= 1;
+            setCountdown(timeLeft);
+
+            if (timeLeft <= 0) {
+                clearInterval(intervalId);
+                navigate('/');
+            }
+        }, 1000);
+
+        return () => clearInterval(intervalId);
+    }, [verified, navigate]);
+
+    const msgClass = !loading
+        ? (verified ? 'text-[var(--success)]' : 'text-[var(--error-text)]')
+        : '';
     const buttonLabel = verified ? 'Go to Login' : 'Go to Register';
     const buttonAction = () => navigate(verified ? '/' : '/register');
 
     return (
         <div className="card" id="verifyDiv">
-            <div className='text-center'>
-                <strong className='text-2xl font-bold'>Email Verification</strong>
+            <div className="text-center">
+                <strong className="text-2xl font-bold">Email Verification</strong>
             </div>
 
-            <div className='pt-6 text-center'>
-                <div className={`text-md ${msgClass}`}>{loading ? 'Please wait...' : message}</div>
+            <div className="pt-6 text-center">
+                <div className={`text-md ${msgClass}`}>
+                    {loading ? 'Please wait...' : message}
+                </div>
                 {verified && (
-                    <div className='text-sm text-[var(--muted-text)] pt-2'>Redirecting to login in {countdown}s...</div>
+                    <div className="text-sm text-[var(--muted-text)] pt-2">
+                        Redirecting to login in {countdown}s...
+                    </div>
                 )}
             </div>
 
-            <div className='pt-6'>
+            <div className="pt-6">
                 <button
-                    className={`w-full bg-linear-65 from-[var(--primary)] to-[var(--muted)]`}
-                    type='button'
+                    className="w-full bg-linear-65 from-[var(--primary)] to-[var(--muted)]"
+                    type="button"
                     onClick={buttonAction}
-                >{buttonLabel}</button>
+                >
+                    {buttonLabel}
+                </button>
             </div>
         </div>
     );

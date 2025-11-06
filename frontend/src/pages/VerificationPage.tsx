@@ -1,11 +1,16 @@
 import Verification from "../components/Verification";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 
 const VerificationPage = () => {
     const { verificationToken } = useParams<{ verificationToken: string }>();
+    const [searchParams] = useSearchParams();
+    const type = searchParams.get('type') || 'email';
 
     return (
-        <Verification verificationToken = {verificationToken} />
+        <Verification 
+            verificationToken={verificationToken}
+            type={type}
+        />
     );
 }
 export default VerificationPage;

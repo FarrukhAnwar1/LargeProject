@@ -22,24 +22,48 @@ const userSchema = new mongoose.Schema({
         trim: true,
         required: true,
     },
-    //Company assigned to employy
+    // User type (solo, company member, company admin)
+    userType: {
+        type: String,
+        enum: ['solo', 'company_member', 'company_admin'],
+        required: true
+    },
+
+    // Company related fields
     companyName: {
         type: String,
         trim: true,
-        required: true,
+        default: function() {
+            return this.userType === 'solo' ? 'N/A' : null;
+        },
+        validate: {
+            validator: function(v) {
+                if (this.userType === 'solo') return v === 'N/A'; // Must be N/A for solo users
+                return v != null && v.trim().length > 0; // Require non-empty string for company users
+            },
+            message: 'Company name is required for company members and admins'
+        }
     },
 
-    isVerified: {
+    // Email verification
+    isEmailVerified: {
         type: Boolean,
-        default: false,
-        //i took away required, not sure if this messes up anything
+        default: false
+    },
+
+    // Company admin verification (for company members)
+    isAdminVerified: {
+        type: Boolean,
+        default: function() {
+            return this.userType !== 'company_member'; // true for solo and admin users
+        }
     },
 
     // Roles assigned to the user
     role: {
         type: [String],
         enum: ['user', 'admin', 'superadmin'],
-        default: ['user'],
+        default: ['user']
     },
 
     // Password reset token and its expiration
@@ -51,9 +75,14 @@ const userSchema = new mongoose.Schema({
 
 
 
-    //Adjusted verification tokens just for my use:
+    // Email verification tokens
     verificationToken: String,
     verificationTokenExpiresAt: Date,
+    
+    // Admin verification tokens (for company members)
+    adminVerificationToken: String,
+    adminVerificationTokenExpiresAt: Date,
+    
     //Reset Password tokens
     resetPasswordToken: String,
     resetPasswordExpiresAt: Date,

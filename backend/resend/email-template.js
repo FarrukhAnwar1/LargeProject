@@ -1,5 +1,39 @@
 //From REACT email, can be changed
-export const verificationTokenEmailTemplate = `<!DOCTYPE html>
+// Helper function to get button text and message based on type
+export const getEmailContent = (type, data = {}) => {
+    switch (type) {
+        case 'admin_verification':
+            return {
+                title: 'New Member Verification Required',
+                message: `${data.newMemberName} (${data.newMemberEmail}) wants to join your company. Please verify them to grant access.`,
+                buttonText: 'Verify Member'
+            };
+        case 'member_pending':
+            return {
+                title: 'Registration Pending Admin Approval',
+                message: `Your registration for ${data.companyName} is pending admin approval. We'll notify you once approved.`,
+                buttonText: 'Check Status'
+            };
+        case 'admin_approved':
+            return {
+                title: 'Company Access Granted',
+                message: `Your account has been approved by the admin of ${data.companyName}. You can now log in.`,
+                buttonText: 'Login Now'
+            };
+        default:
+            // For company members, include admin approval message
+            const isCompanyMember = data.userType === 'company_member';
+            return {
+                title: 'Verify Your Email',
+                message: `Click the button below to finish setting up your account${isCompanyMember ? 
+                    '. Note: After email verification, you will need admin approval from your company administrator. ' +
+                    'Please contact them if you do not receive an approval notification within 24 hours.' : ''}`,
+                buttonText: 'Verify'
+            };
+    }
+};
+
+export const verificationTokenEmailTemplate = (type = 'email', data = {}) => `<!DOCTYPE html>
 <html dir="ltr" lang="en">
   <head>
     <link 
@@ -37,9 +71,9 @@ export const verificationTokenEmailTemplate = `<!DOCTYPE html>
                     style="display:block;outline:none;border:none;text-decoration:none;margin:0 auto" 
                     width="212" />
                     <p 
-                    style="font-size:22px;line-height:16px;color:#000;font-weight:700;font-family:HelveticaNeue,Helvetica,Arial,sans-serif;height:16px;letter-spacing:0;margin:16px 8px 8px 8px;text-transform:uppercase;text-align:center;margin-top:16px;margin-right:8px;margin-bottom:8px;margin-left:8px"> Verify Your Email </p>
+                    style="font-size:20px;line-height:1.4;color:#000;font-weight:700;font-family:HelveticaNeue,Helvetica,Arial,sans-serif;letter-spacing:0;margin:16px 16px 24px 16px;text-transform:uppercase;text-align:center">${getEmailContent(type, data).title}</p>
                     <h1 
-                    style="color:#000;display:inline-block;font-family:HelveticaNeue-Medium,Helvetica,Arial,sans-serif;font-size:22px;font-weight:500;line-height:24px;margin-bottom:0;margin-top:0;text-align:center"> Click the button below to finish setting up your account </h1>
+                    style="color:#000;display:block;font-family:HelveticaNeue-Medium,Helvetica,Arial,sans-serif;font-size:18px;font-weight:500;line-height:1.6;margin:0 24px 24px;text-align:center">${getEmailContent(type, data).message}</h1>
                     
                     <!--The table-->
                     <table 
@@ -66,7 +100,7 @@ export const verificationTokenEmailTemplate = `<!DOCTYPE html>
                           text-transform:uppercase;
                           letter-spacing:0.5px;
                           display:inline-block;">
-                          Verify
+                          ${getEmailContent(type, data).buttonText}
                           </a>
                         </td>
                       </tr>
@@ -80,17 +114,6 @@ export const verificationTokenEmailTemplate = `<!DOCTYPE html>
                   <br/>
                   <a href="{verificationLink}" style="color:#22577A;">
                   {verificationLink}
-                  </a>
-                  </p>
-
-                  <p
-                  style="font-size:15px;line-height:23px;color:#444;font-family:HelveticaNeue,Helvetica,Arial,sans-serif;text-align:center;padding: 0 40px;margin: 16px 0 0 0;">
-                  Not expecting this email? Contact
-                  <a
-                    href="mailto:noreply@farrukhanwar.site"
-                    style="color:#444;text-decoration:underline"
-                    target="_blank">
-                    noreply@farrukhanwar.site
                   </a>
                   </p>
                 </td>

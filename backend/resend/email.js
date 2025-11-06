@@ -1,17 +1,18 @@
 import { resend } from "./config.js";
-import { verificationTokenEmailTemplate, WELCOME_EMAIL_TEMPLATE } from "./email-template.js";
+import { verificationTokenEmailTemplate, WELCOME_EMAIL_TEMPLATE, getEmailContent } from "./email-template.js";
 import { buildPath } from "../src/utils/path.js";
 
-export const sendVerificationEmail = async (email, verificationToken) => {
+export const sendVerificationEmail = async (email, verificationToken, type = 'email', data = {}) => {
   
     if (!resend) throw new Error("Resend client not defined");
 
   try {
-    const { data, error } = await resend.emails.send({
+    const emailContent = getEmailContent(type, data);
+    const { data: responseData, error } = await resend.emails.send({
       from: "CarStax <noreply@farrukhanwar.site>",
       to: [email],
-      subject: "CarStax Email Verification",
-      html: verificationTokenEmailTemplate.replaceAll("{verificationLink}", buildPath(`verify/${verificationToken}`)),
+      subject: `CarStax - ${emailContent.title}`,
+      html: verificationTokenEmailTemplate(type, data).replaceAll("{verificationLink}", data.useCustomUrl ? buildPath(verificationToken) : buildPath(`verify/${verificationToken}${data.type === 'admin' ? '?type=admin' : ''}`)),
     });
 
     if (error) {
@@ -19,8 +20,8 @@ export const sendVerificationEmail = async (email, verificationToken) => {
       throw error;
     }
 
-    console.log("Verification email sent:", data);
-    return data;
+    console.log("Verification email sent:", responseData);
+    return responseData;
   } catch (err) {
     console.error("Error in sendVerificationEmail:", err);
     throw err;

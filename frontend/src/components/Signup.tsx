@@ -2,18 +2,24 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { buildPath } from '../utils/Path';
+import TileCarousel from './TileCarousel';
 
 function Signup() {
     const navigate = useNavigate();
+    type UserType = 'solo' | 'company_member' | 'company_admin';
+
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [userType, setUserType] = useState<UserType>('solo');
+    const [companyName, setCompanyName] = useState('');
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
     const [errors, setErrors] = useState<string[]>([]);
     const [registeredSuccess, setRegisteredSuccess] = useState<boolean>(false);
     const [countdown, setCountdown] = useState<number>(10);
+    const [existingCompanies, setExistingCompanies] = useState<string[]>([]);
     const redirectIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
     useEffect(() => {
@@ -27,6 +33,22 @@ function Signup() {
         navigate('/');
     };
 
+    // Load existing companies for validation
+    const loadCompanies = async () => {
+        try {
+            const res = await axios.get(buildPath('api/car/companies'));
+            setExistingCompanies(res.data || []);
+        } catch (err) {
+            console.error('Failed to load companies:', err);
+            setExistingCompanies([]);
+        }
+    };
+
+    // Call loadCompanies when needed for validation
+    useEffect(() => {
+        loadCompanies();
+    }, []);
+
     const handleSubmit = async (e?: React.FormEvent) => {
         e?.preventDefault();
         setMessage('');
@@ -37,6 +59,22 @@ function Signup() {
         if (!lastName.trim()) errs.push('Last name is required.');
         if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) errs.push('Valid email is required.');
         if (!password || password.length < 6) errs.push('Password must be at least 6 characters.');
+        
+        // Company validation
+        if (userType !== 'solo') {
+            if (!companyName.trim()) {
+                errs.push('Company name is required.');
+            }
+            if (userType === 'company_admin') {
+                if (existingCompanies.includes(companyName.trim())) {
+                    errs.push('Company name already exists.');
+                }
+            } else if (userType === 'company_member') {
+                if (!existingCompanies.includes(companyName.trim())) {
+                    errs.push('Company does not exist.');
+                }
+            }
+        }
 
         if (errs.length) {
             setErrors(errs);
@@ -45,8 +83,17 @@ function Signup() {
 
         setLoading(true);
         try {
-            const payload = { email: email.trim(), firstName: firstName.trim(), lastName: lastName.trim(), companyName: 'N/A', password };
-            const res = await axios.post(buildPath('api/auth/signup'), payload, { headers: { 'Content-Type': 'application/json' } });
+            const payload = { 
+                email: email.trim(), 
+                firstName: firstName.trim(), 
+                lastName: lastName.trim(), 
+                password,
+                userType,
+                companyName: userType === 'solo' ? undefined : companyName.trim()
+            };
+            const res = await axios.post(buildPath('api/auth/signup'), payload, { 
+                headers: { 'Content-Type': 'application/json' } 
+            });
             if (res?.status === 201 || res?.data?.success) {
                 setRegisteredSuccess(true);
                 setMessage('Registration successful. Check your email for verification.');
@@ -87,6 +134,33 @@ function Signup() {
             <div className='text-center'>
                 <strong className='text-2xl font-bold'>Sign Up</strong>
             </div>
+
+            <div className="pt-4">
+                <label className="block">Account Type:</label>
+                <TileCarousel
+                    options={[
+                        { id: 'solo', label: 'Individual User', icon: 'solo.png' },
+                        { id: 'company_member', label: 'Join Company', icon: 'join_company.png' },
+                        { id: 'company_admin', label: 'Create Company', icon: 'create_company.png' }
+                    ]}
+                    value={userType}
+                    onChange={(id) => setUserType(id as UserType)}
+                    ariaLabel="Account Type Selection"
+                />
+            </div>
+
+            {userType !== 'solo' && (
+                <div className="pt-4">
+                    <label className="block">Company Name:</label>
+                    <input
+                        className="p-2 w-full border rounded"
+                        type="text"
+                        placeholder={userType === 'company_member' ? 'Enter existing company name' : 'Enter new company name'}
+                        value={companyName}
+                        onChange={(e) => setCompanyName(e.target.value)}
+                    />
+                </div>
+            )}
 
             <div className="flex">
                 <div className="login-input !w-[50%] mr-1 pt-4">
