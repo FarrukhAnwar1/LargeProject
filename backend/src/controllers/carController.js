@@ -1,211 +1,183 @@
-import Car from '../../models/car.js';
-import User from '../../models/user.js';
+import User from "../../models/user.js";
+import bcrypt from 'bcryptjs';
+import { generateVerificationToken } from "../utils/generateVerificationToken.js";
+import { generateJWTToken } from "../utils/generateJWTToken.js";
+import { sendVerificationEmail, sendPasswordResetEmail, sendResetSuccessEmail} from "../../resend/email.js";
+import crypto from "crypto";
+import { buildPath } from "../utils/path.js";
 
-// Get all companies
-export const getCompanies = async (req, res) => {
-    try {
-        // Find all unique company names where userType is company_admin
-        const companies = await User.distinct('companyName', { 
-            companyName: { $exists: true, $ne: null, $ne: 'N/A' },
-            userType: 'company_admin'
-        });
-        
-        return res.status(200).json(companies);
-    } catch (error) {
-        console.error('Error fetching companies:', error);
-        return res.status(500).json({ message: 'Internal server error' });
-    }
-};
-
-export const addCar = async (req, res) => {
+export const signup = async (req, res) => {
     console.log("req.body", req.body);
-
-    try {
-        const userId = req.user.userId;
-
-        //find the company name of the user 
-        const user = await User.findById(userId);
-        if (!user) return res.status(404).json({ message: 'User not found' });
-
-        //Grab information from car:
-        const { licensePlate, rentalStatus, currentRental, year, color, make, model, mileage, repairStatus, warningLightIndicators, vehicleIdentificationNumber, carType } = req.body;
-
-        if (!licensePlate || !year || !color
-            || !make || !model
-            || !vehicleIdentificationNumber
-        ) {
-            return res.status(400).json({ message: "All fields are required" });
+    const{email, firstName, lastName, companyName, password } = req.body;
+    try{
+        if(!email || !firstName || !lastName ||!companyName || !password) {
+            return res.status(400).json({message: "All fields are required"});
         }
 
-        // Check if a car with the same license plate already exists
-        const existingCar = await Car.findOne({ licensePlate: licensePlate });
-        if (existingCar) {
-            return res.status(400).json({ message: "A car with this license plate already exists" });
+        const userAlreadyExsits = await User.findOne({email});
+        if(userAlreadyExsits){
+            return res.status(400).json({message: "User already exists"});
         }
-
-        //add the car data
-        const car = new Car({
-            userID: user._id,
-            companyName: user.companyName !== "N/A" ? user.companyName : "N/A",
-            licensePlate,
-            year,
-            color,
-            make,
-            model,
-            mileage: mileage || 0,
-            vehicleIdentificationNumber,
-            carType: carType || 'sedan',
-            rentalStatus: rentalStatus || 'available',
-            warningLightIndicators: warningLightIndicators || []
-        });
-
-        await car.save();
-
-        res.status(201).json({ success: true, message: 'Car added successfully', car });
-
-    } catch (error) {
-        console.error(error);
-        res.status(400).json({ success: false, message: error.message });
-    }
-
-};
+        
+        console.log("Password from body:", password);
 
 
+        const hashedPassword = await bcrypt.hash(password, 10);
+        
+        const verificationToken = generateVerificationToken();
 
+        const user = new User({
+            email,
+            firstName,
+            lastName,
+            companyName,
+            passwordHash: hashedPassword,
+            verificationToken: verificationToken,
+            verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 *1000 // 24 hours to verify
+        })
+        
+        await user.save();
 
-export const deleteCar = async (req, res) => {
-    try {
-        const userId = req.user.userId;
-        const carId = req.params.id;
+        await sendVerificationEmail(user.email, verificationToken);
 
-        if (!carId) {
-            return res.status(400).json({ success: false, message: "Car ID is required" });
+         try {
+            generateJWTToken(res, user._id );
+            console.log("Token successfully made");
+            
+        } catch(err) {
+            console.error("JWT token generation failed:", err);
         }
-
-        //get the current user 
-        const user = await User.findById(userId);
-        if (!user) return res.status(404).json({ success: false, message: "User was not found" });
-
-        //then find the car we want
-        const car = await Car.findById(carId);
-        if (!car) {
-            return res.status(404).json({ success: false, message: "Car was not found" });
-        }
-
-
-        //Sees if the user has a company and a user, and isn't N/A
-        if (user.companyName !== "N/A") {
-            if (car.companyName !== user.companyName) {
-                return res.status(403).json({ success: false, message: "Access Denied to Delete. Company cars only." });
-            }
-        } else if (car.userID.toString() !== String(user._id)) { //if a car has no company name, it checks based on ID
-            return res.status(403).json({ success: false, message: "Access Denied to Delete. Personal cars only." });
-        }
-
-        await Car.findByIdAndDelete(carId);
-        res.status(200).json({ success: true, message: "Car successfully deleted" });
-    } catch (error) {
-        console.error("Error deleting car:", error);
-        res.status(400).json({ success: false, message: error.message });
-    }
-};
-
-export const editCar = async (req, res) => {
-    try {
-        const carId = req.params.id;
-        const userId = req.user.userId;
-
-        //first check company
-        const user = await User.findById(userId);
-        if (!user) return res.status(404).json({ success: false, message: "User not found" });
-
-        //find car using id
-        const car = await Car.findById(carId);
-        if (!car) return res.status(404).json({ success: false, message: "Car not found" });
-
-        //extra protection to make sure outside of users of company can't edit car
-        if (user.companyName !== "N/A") {
-            if (car.companyName !== user.companyName) {
-                return res.status(403).json({ success: false, message: "Access Denied to Edit. Company cars only." });
-            }
-        } else if (String(car.userID) !== String(user._id)) { //if a car has no company name, it checks based on ID
-            return res.status(403).json({ success: false, message: "Access Denied to Edit. Personal cars only." });
-        }
-
-        // If license plate is being updated, check for duplicates
-        if (req.body.licensePlate && req.body.licensePlate !== car.licensePlate) {
-            const existingCar = await Car.findOne({ 
-                licensePlate: req.body.licensePlate,
-                _id: { $ne: carId } // Exclude the current car from the check
-            });
-            if (existingCar) {
-                return res.status(400).json({ success: false, message: "A car with this license plate already exists" });
-            }
-        }
-
-        const fieldsUpdate = [
-            "licensePlate",
-            "rentalStatus",
-            "year",
-            "color",
-            "make",
-            "model",
-            "mileage",
-            "repairStatus",
-            "warningLightIndicators",
-            "vehicleIdentificationNumber",
-            "carType"
-        ];
-
-        fieldsUpdate.forEach(field => {
-            if (req.body[field] !== undefined) {
-                car[field] = req.body[field];
+        
+        res.status(201).json({
+            success: true,
+            user: {
+                ...user._doc,
+                passwordHash: undefined
             }
         });
 
-        await car.save();
-        res.status(200).json({ success: true, message: "Car updated successfully", car });
-
-    } catch (error) {
-        console.error(error);
-        res.status(400).json({ success: false, message: error.message });
+    } catch (error){
+        res.status(400).json({success: false, message: error.message });
     }
 };
 
 
 
-export const getCars = async (req, res) => {
-    try {
-        const userId = req.user.userId;
-
-        //Find Current User
-        const user = await User.findById(userId);
-        if (!user) return res.status(404).json({ success: false, message: "User not found" });
-
-
-        let query = {};
-
-        //if company name "N/A" return cars of user only
-        //else return all the cars of that company
-        if (user.companyName === "N/A") {
-            query.userID = user._id;
-        } else {
-            query.companyName = user.companyName;
+export const login = async (req, res) => {
+    const {email, password} = req.body;
+    try{
+        const user = await User.findOne({email});
+        if(!user){
+            return res.status(400).json({success: false, message: "Invalid credentials"});
         }
 
-        //If we want to add filtering in our searches:
-        if (req.query.rentalStatus) query.rentalStatus = req.query.rentalStatus;
-        if (req.query.carType) query.carType = req.query.carType;
-        if (req.query.make) query.make = req.query.make;
-        if (req.query.model) query.model = req.query.model;
-        if (req.query.year) query.year = Number(req.query.year);
+        const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
+        if(!isPasswordValid){
+            return res.status(400).json({success: false, message: "Invalid credentials"});
+        }
 
-        const cars = await Car.find(query);
+        //check if verified
+        const isVerified = user.isVerified;
+        if(!isVerified){
+            return res.status(400).json({success: false, message: "Email is not verified"});
+        }
 
-        res.status(200).json({ success: true, cars });
+        generateJWTToken(res, user._id);
 
-    } catch (error) {
-        console.error("Error fetching cars:", error);
-        res.status(400).json({ success: false, message: error.message });
+        res.status(200).json({
+            success:true,
+            message: "Login successfully",
+        })
+    }catch (error){
+        console.log("error logging in", error);
+        res.status(400).json({success: false, message: error.message});
     }
 };
+
+export const logout = (req, res) => {
+    res.clearCookie("token");
+    res.status(200).json({success: true, message: "Logged out successfully!"});
+};
+
+export const verifyEmail = async (req, res) => {
+    const{token} = req.params;
+    try{
+        const user = await User.findOne({
+            verificationToken: token,
+            verificationTokenExpiresAt: {$gt: Date.now() },
+
+        })
+        if(!user){
+            return res.status(400).json({ success: false, message: "Invalid or expired verification code"});
+        }
+        user.isVerified = true;
+        user.verificationToken = undefined;
+        user.verificationTokenExpiresAt = undefined;
+        await user.save();
+
+        // await sendWelcomeEmail(user.email, user.firstName || user.email);
+
+        res.status(200).json({success: true, message: "Email verified successfully"});
+    }catch(error){
+        console.log("error verifying email", error);
+        res. status(400).json({ success: false, message: error.message});
+    }
+}
+
+export const forgotPassword = async (req, res) => {
+    //Provide email
+    const{email} = req.body;
+
+    try{
+        const user  = await User.findOne({email});
+        if(!user){
+            return res.status(400).json({ success: false, message: "User not found"});
+        }
+        const resetPasswordToken = crypto.randomBytes(32).toString("hex"); //string of random values
+        const resetPasswordExpiresAt = Date.now() + 1 * 60 * 60 * 1000; //1 hour
+
+        user.resetPasswordToken = resetPasswordToken;
+        user.resetPasswordExpiresAt = resetPasswordExpiresAt;
+
+        await user.save();
+        await sendPasswordResetEmail(user.email,
+             buildPath(`/reset-password/${resetPasswordToken}`),
+            user.firstName);//need to change this link in env to our reset password frontend
+
+            res.status(200).json({success: true, message: "Password reset email sent successfully"});
+    }catch (error){
+        console.log("error sending password reset email", error);
+        res.status(400).json({success: false, message: error.message});
+    }
+};
+
+
+export const resetPassword = async (req, res) => {
+    try{
+        const {token} = req.params;
+        const {password} = req.body;
+
+        if(!password){
+            return res.status(400).json({success: false, message: "Password is required."});
+        }
+        const user = await User.findOne({
+            resetPasswordToken: token, //user that matches the reset password token
+            resetPasswordExpiresAt: {$gt: Date.now()},
+        })
+        if(!user){
+            return res.status(400).json({success:false, message: "Invalid or expired reset token"});
+        }
+        const hashedPassword = await bcrypt.hash(password, 10);
+        user.passwordHash = hashedPassword;
+        user.resetPasswordExpiresAt = undefined;
+        await user.save();
+
+        await sendResetSuccessEmail(user.email,user.firstName);
+        
+        res.status(200).json({success: true, message: "Password reset successful"});
+    }catch (error){
+        console.log("error resetting password", error);
+        res.status(400).json({success: false, message: error.message});
+
+    }
+}
