@@ -37,6 +37,12 @@ export const addCar = async (req, res) => {
             return res.status(400).json({ message: "All fields are required" });
         }
 
+        // Check if a car with the same license plate already exists
+        const existingCar = await Car.findOne({ licensePlate: licensePlate });
+        if (existingCar) {
+            return res.status(400).json({ message: "A car with this license plate already exists" });
+        }
+
         //add the car data
         const car = new Car({
             userID: user._id,
@@ -124,6 +130,17 @@ export const editCar = async (req, res) => {
             }
         } else if (String(car.userID) !== String(user._id)) { //if a car has no company name, it checks based on ID
             return res.status(403).json({ success: false, message: "Access Denied to Edit. Personal cars only." });
+        }
+
+        // If license plate is being updated, check for duplicates
+        if (req.body.licensePlate && req.body.licensePlate !== car.licensePlate) {
+            const existingCar = await Car.findOne({ 
+                licensePlate: req.body.licensePlate,
+                _id: { $ne: carId } // Exclude the current car from the check
+            });
+            if (existingCar) {
+                return res.status(400).json({ success: false, message: "A car with this license plate already exists" });
+            }
         }
 
         const fieldsUpdate = [

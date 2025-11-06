@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios, { AxiosError } from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { buildPath } from '../utils/Path';
@@ -55,8 +55,8 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
     const [errors, setErrors] = useState<string[]>([]);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
-    const [redirectTimer, setRedirectTimer] = useState<number | null>(null);
     const [countdown, setCountdown] = useState<number>(5);
+    const redirectTimerRef = useRef<number | undefined>(undefined);
     // Rental visibility is derived from rentalStatus === 'rented'
 
     // Tile options for car type and rental status. Icons are expected in ../resources/icons
@@ -92,7 +92,7 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
     useEffect(() => {
         if (showSuccessModal) {
             setCountdown(5);
-            const timer = window.setInterval(() => {
+            const intervalId = window.setInterval(() => {
                 setCountdown(prev => {
                     if (prev <= 1) {
                         navigate('/cars');
@@ -101,11 +101,13 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
                     return prev - 1;
                 });
             }, 1000);
-            setRedirectTimer(timer);
+            redirectTimerRef.current = intervalId;
+
 
             return () => {
-                if (timer) {
-                    window.clearInterval(timer);
+                if (redirectTimerRef.current) {
+                    window.clearInterval(redirectTimerRef.current);
+                    redirectTimerRef.current = undefined;
                 }
             };
         }
@@ -133,7 +135,7 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
                 setLoading(true);
                 try {
                     // Get car details from GET /api/car (gets all cars)
-                    const carRes = await axios.get<{success: boolean; cars: Car[]}>(buildPath('api/car'));
+                    const carRes = await axios.get<{ success: boolean; cars: Car[] }>(buildPath('api/car'));
                     const car = carRes.data?.cars?.find(c => c._id === carId);
                     if (car) {
                         console.log('Found car:', car); // Debug log
@@ -159,12 +161,12 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
                         console.log('Fetching rental for car ID:', carId); // Debug log
                         const rentRes = await axios.get(buildPath(`api/rental/${carId}`));
                         console.log('Rental response:', rentRes.data); // Debug log
-                        
+
                         const rentals = rentRes.data?.rentals;
                         // Get the most recent rental
-                        const currentRental = Array.isArray(rentals) && rentals.length > 0 ? 
+                        const currentRental = Array.isArray(rentals) && rentals.length > 0 ?
                             rentals[0] : null; // rentals are already sorted by dateRentedOut DESC
-                            
+
                         if (currentRental) {
                             console.log('Found rental:', currentRental); // Debug log
                             setRentalForm({
@@ -178,7 +180,7 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
                                 notes: currentRental.notes ?? '',
                                 _id: currentRental._id // Store the rental ID for updates
                             });
-                            
+
                             // Also make sure rental status is set to rented if there's a current rental
                             setCarForm(prev => ({
                                 ...prev,
@@ -295,6 +297,7 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
         setMessage('');
         if (!validate()) return;
         setLoading(true);
+
         try {
             const carPayload = {
                 licensePlate: carForm.licensePlate.trim(),
@@ -310,90 +313,56 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
             };
 
             let savedCarId = carId;
-            
+
             if (isAdd) {
-                // POST /api/car/add
                 const res = await axios.post(buildPath('api/car/add'), carPayload);
-                if (!res.data?.car?._id) {
-                    throw new Error('No car ID returned from server');
-                }
+                if (!res.data?.car?._id) throw new Error('No car ID returned from server');
                 savedCarId = res.data.car._id;
-                console.log('Created car with ID:', savedCarId); // Debug log
+                setMessage('Car added successfully!');
             } else {
-                // PATCH /api/car/:id
                 await axios.patch(buildPath(`api/car/${carId}`), carPayload);
-                setMessage('Car updated successfully.');
-                setShowSuccessModal(true);
-                // Set up redirect timer
-                const timer = window.setTimeout(() => {
-                    navigate('/cars');
-                }, 5000);
-                setRedirectTimer(timer);
+                setMessage('Car updated successfully!');
             }
 
-            // Handle rental based on rental status
+            // --- Handle rental creation/update ---
             if (carForm.rentalStatus === 'rented') {
-                // Create or update rental record
-                console.log('Handling rental for car:', savedCarId); // Debug log
                 const rentalPayload = {
                     renterName: rentalForm.renterName.trim(),
                     renterEmail: rentalForm.renterEmail.trim(),
                     renterPhone: rentalForm.renterPhone.trim(),
                     dateRentedOut: rentalForm.dateRentedOut,
                     expectedReturnDate: rentalForm.expectedReturnDate,
-                    actualReturnDate: rentalForm.actualReturnDate || undefined, // Use undefined for empty dates
-                    rentalRatePerDay: Number(rentalForm.rentalRatePerDay) || 0, // Convert to number, default to 0
+                    actualReturnDate: rentalForm.actualReturnDate || undefined,
+                    rentalRatePerDay: Number(rentalForm.rentalRatePerDay) || 0,
                     notes: rentalForm.notes?.trim(),
                     carID: savedCarId
                 };
-                
-                // Debug log rental payload
-                console.log('Rental payload:', JSON.stringify(rentalPayload, null, 2));
 
-                try {
-                    if (rentalForm._id) {
-                        // Update existing rental using PUT /api/rental/:id
-                        console.log('Updating existing rental:', rentalForm._id);
-                        const rentalRes = await axios.put(buildPath(`api/rental/${rentalForm._id}`), rentalPayload);
-                        console.log('Rental update response:', rentalRes.data);
-                    } else {
-                        // Create new rental using POST /api/rental
-                        console.log('Creating new rental');
-                        const rentalRes = await axios.post(buildPath('api/rental'), rentalPayload);
-                        console.log('Rental creation response:', rentalRes.data);
-                    }
-                } catch (err) {
-                    console.error('Failed to save rental:', err);
-                    if (err instanceof AxiosError) {
-                        console.error('Rental error response:', err.response?.data);
-                    }
-                    throw err; // Re-throw to trigger error handling
+                if (rentalForm._id) {
+                    await axios.put(buildPath(`api/rental/${rentalForm._id}`), rentalPayload);
+                } else {
+                    await axios.post(buildPath('api/rental'), rentalPayload);
                 }
             } else if (!isAdd) {
-                // If updating an existing car and status is not 'rented', delete any existing rentals
-                try {
-                    await axios.delete(buildPath(`api/rental/car/${savedCarId}`));
-                } catch (err) {
-                    // Ignore 404 errors (no rentals found)
-                    if (!(err instanceof AxiosError) || err.response?.status !== 404) {
-                        throw err;
-                    }
-                }
+                await axios.delete(buildPath(`api/rental/car/${savedCarId}`)).catch(err => {
+                    if (!(err instanceof AxiosError) || err.response?.status !== 404) throw err;
+                });
             }
+
+            // ✅ Only show modal when everything succeeds
+            setShowSuccessModal(true);
         } catch (err) {
-            console.error(err);
+            console.error('Error saving car:', err);
             if (err instanceof AxiosError && err?.response?.data?.message) {
                 setMessage(err.response.data.message);
+                setErrors([err.response.data.message]);
             } else {
                 setMessage('An error occurred while saving.');
+                setErrors(['An error occurred while saving.']);
             }
+            setShowSuccessModal(false);
         } finally {
             setLoading(false);
-            // Show success modal if no errors occurred
-            if (!message) {
-                setShowSuccessModal(true);
-                setMessage(isAdd ? 'Car added successfully!' : 'Car updated successfully!');
-            }
         }
     };
 
@@ -454,7 +423,17 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
             <div className='grid grid-cols-2 gap-4 pt-4'>
                 <div>
                     <label className='block font-medium'>Year</label>
-                    <input type="number" min="1900" max={new Date().getFullYear() + 1} name='year' value={carForm.year} onChange={handleCarChange} className='p-2 w-full' placeholder='2025' />
+                    <input 
+                        type="number" 
+                        min="1900" 
+                        max={new Date().getFullYear() + 1} 
+                        name='year' 
+                        value={carForm.year} 
+                        onChange={handleCarChange} 
+                        onWheel={e => e.currentTarget.blur()}
+                        className='p-2 w-full' 
+                        placeholder='2025' 
+                    />
                 </div>
                 <div>
                     <label className='block font-medium'>Mileage</label>
@@ -464,6 +443,7 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
                         name='mileage'
                         value={carForm.mileage || ''}
                         onChange={handleCarChange}
+                        onWheel={e => e.currentTarget.blur()}
                         className='p-2 w-full'
                         placeholder="0"
                         onFocus={(e) => e.target.value === '0' && e.target.select()}
@@ -600,6 +580,7 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
                                 name='rentalRatePerDay'
                                 value={rentalForm.rentalRatePerDay || ''}
                                 onChange={handleRentalChange}
+                                onWheel={e => e.currentTarget.blur()}
                                 className='p-2 w-full'
                                 onFocus={(e) => e.target.value === '0' && e.target.select()}
                             />
@@ -686,8 +667,9 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
                 }
                 onConfirm={() => {
                     setShowSuccessModal(false);
-                    if (redirectTimer !== null) {
-                        window.clearInterval(redirectTimer);
+                    if (redirectTimerRef.current) {
+                        window.clearInterval(redirectTimerRef.current);
+                        redirectTimerRef.current = undefined;
                     }
                     navigate('/cars');
                 }}

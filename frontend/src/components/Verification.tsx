@@ -114,6 +114,9 @@ const Verification = ({ verificationToken, type = 'email' }: VerificationProps) 
         };
     }, [token, verificationType]);
 
+    // Store intervalId in ref to access it from button click
+    const intervalIdRef = useRef<number | undefined>(undefined);
+
     // Separate effect for countdown and redirect
     useEffect(() => {
         if (!verified) return;
@@ -121,24 +124,36 @@ const Verification = ({ verificationToken, type = 'email' }: VerificationProps) 
         setCountdown(5);
         let timeLeft = 5;
 
-        const intervalId = setInterval(() => {
+        intervalIdRef.current = setInterval(() => {
             timeLeft -= 1;
             setCountdown(timeLeft);
 
             if (timeLeft <= 0) {
-                clearInterval(intervalId);
+                if (intervalIdRef.current) {
+                    clearInterval(intervalIdRef.current);
+                }
                 navigate('/');
             }
         }, 1000);
 
-        return () => clearInterval(intervalId);
+        return () => {
+            if (intervalIdRef.current) {
+                clearInterval(intervalIdRef.current);
+            }
+        };
     }, [verified, navigate]);
 
     const msgClass = !loading
         ? (verified ? 'text-[var(--success)]' : 'text-[var(--error-text)]')
         : '';
     const buttonLabel = verified ? 'Go to Login' : 'Go to Register';
-    const buttonAction = () => navigate(verified ? '/' : '/register');
+    const buttonAction = () => {
+        // Clear the interval and navigate immediately
+        if (intervalIdRef.current) {
+            clearInterval(intervalIdRef.current);
+        }
+        navigate(verified ? '/' : '/register');
+    };
 
     return (
         <div className="card" id="verifyDiv">
