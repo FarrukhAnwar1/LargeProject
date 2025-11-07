@@ -114,13 +114,13 @@ function CarsUI() {
                 <div className="text-red-500">{error}</div>
             ) : (
                 <>
-                    <div id="cardUIDiv" className="container bg-[var(--muted)] mx-auto p-4 rounded-lg shadow-md">
+                    <div id="cardUIDiv" className="bg-[var(--muted)] mx-auto p-4 rounded-lg shadow-md">
                         <div className="filter-section max-w-screen-lg mx-auto">
                             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-4">
                                 <select
                                     value={filters.make}
                                     onChange={(e) => handleFilterChange('make', e.target.value)}
-                                    className="p-2 border rounded"
+                                    className="p-2 border bg-white rounded"
                                 >
                                     <option value="">Select Make</option>
                                     {uniqueMakes.map(make => (
@@ -131,7 +131,7 @@ function CarsUI() {
                                 <select
                                     value={filters.model}
                                     onChange={(e) => handleFilterChange('model', e.target.value)}
-                                    className="p-2 border rounded"
+                                    className="p-2 border bg-white rounded"
                                 >
                                     <option value="">Select Model</option>
                                     {uniqueModels.map(model => (
@@ -142,7 +142,7 @@ function CarsUI() {
                                 <select
                                     value={filters.year}
                                     onChange={(e) => handleFilterChange('year', e.target.value)}
-                                    className="p-2 border rounded"
+                                    className="p-2 border bg-white rounded"
                                 >
                                     <option value="">Select Year</option>
                                     {uniqueYears.map(year => (
@@ -153,7 +153,7 @@ function CarsUI() {
                                 <select
                                     value={filters.carType}
                                     onChange={(e) => handleFilterChange('carType', e.target.value)}
-                                    className="p-2 border rounded"
+                                    className="p-2 border bg-white rounded"
                                 >
                                     <option value="">Select Type</option>
                                     {carTypes.map(type => (
@@ -164,7 +164,7 @@ function CarsUI() {
                                 <select
                                     value={filters.rentalStatus}
                                     onChange={(e) => handleFilterChange('rentalStatus', e.target.value)}
-                                    className="p-2 border rounded"
+                                    className="p-2 border bg-white rounded"
                                 >
                                     <option value="">Select Status</option>
                                     {rentalStatuses.map(status => (
