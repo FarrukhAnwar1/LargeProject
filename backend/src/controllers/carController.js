@@ -5,11 +5,11 @@ import User from '../../models/user.js';
 export const getCompanies = async (req, res) => {
     try {
         // Find all unique company names where userType is company_admin
-        const companies = await User.distinct('companyName', { 
+        const companies = await User.distinct('companyName', {
             companyName: { $exists: true, $ne: null, $ne: 'N/A' },
             userType: 'company_admin'
         });
-        
+
         return res.status(200).json(companies);
     } catch (error) {
         console.error('Error fetching companies:', error);
@@ -37,10 +37,25 @@ export const addCar = async (req, res) => {
             return res.status(400).json({ message: "All fields are required" });
         }
 
-        // Check if a car with the same license plate already exists
-        const existingCar = await Car.findOne({ licensePlate: licensePlate });
+        // Check if a car with the same VIN already exists
+        // For company users: check within the same company
+        // For non-company users: check only their own cars
+        let vinQuery = { vehicleIdentificationNumber: vehicleIdentificationNumber };
+
+        if (user.companyName && user.companyName !== "N/A") {
+            // User is in a company - check VIN uniqueness within company
+            vinQuery.companyName = user.companyName;
+        } else {
+            // User is not in a company - check VIN uniqueness only for this user
+            vinQuery.userID = user._id;
+        }
+
+        const existingCar = await Car.findOne(vinQuery);
         if (existingCar) {
-            return res.status(400).json({ message: "A car with this license plate already exists" });
+            const message = user.companyName && user.companyName !== "N/A"
+                ? "A car with this VIN already exists in your company"
+                : "You already have a car with this VIN";
+            return res.status(400).json({ message });
         }
 
         //add the car data
@@ -132,9 +147,33 @@ export const editCar = async (req, res) => {
             return res.status(403).json({ success: false, message: "Access Denied to Edit. Personal cars only." });
         }
 
+        // If VIN is being updated, check for duplicates
+        if (req.body.vehicleIdentificationNumber && req.body.vehicleIdentificationNumber !== car.vehicleIdentificationNumber) {
+            let vinQuery = {
+                vehicleIdentificationNumber: req.body.vehicleIdentificationNumber,
+                _id: { $ne: carId } // Exclude the current car from the check
+            };
+
+            if (user.companyName && user.companyName !== "N/A") {
+                // User is in a company - check VIN uniqueness within company
+                vinQuery.companyName = user.companyName;
+            } else {
+                // User is not in a company - check VIN uniqueness only for this user
+                vinQuery.userID = user._id;
+            }
+
+            const existingCar = await Car.findOne(vinQuery);
+            if (existingCar) {
+                const message = user.companyName && user.companyName !== "N/A"
+                    ? "A car with this VIN already exists in your company"
+                    : "You already have a car with this VIN";
+                return res.status(400).json({ success: false, message });
+            }
+        }
+
         // If license plate is being updated, check for duplicates
         if (req.body.licensePlate && req.body.licensePlate !== car.licensePlate) {
-            const existingCar = await Car.findOne({ 
+            const existingCar = await Car.findOne({
                 licensePlate: req.body.licensePlate,
                 _id: { $ne: carId } // Exclude the current car from the check
             });
@@ -187,7 +226,7 @@ export const getCars = async (req, res) => {
 
         //if company name "N/A" return cars of user only
         //else return all the cars of that company
-        if (user.companyName === "N/A") {
+        if (user.companyName === "N/A" || !user.companyName) {
             query.userID = user._id;
         } else {
             query.companyName = user.companyName;

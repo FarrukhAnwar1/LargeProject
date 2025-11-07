@@ -1,6 +1,11 @@
 function Navbar() {
     function handleTitleClick() {
-        window.location.href = '/cars';
+        const path = window.location.pathname;
+        if (path === '/cars' || path.startsWith('/cars/')) {
+            window.location.href = '/cars';
+        } else {
+            window.location.href = '/login';
+        }
     }
 
     return (

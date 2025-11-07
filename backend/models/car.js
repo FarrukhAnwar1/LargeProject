@@ -16,8 +16,7 @@ const carSchema = new mongoose.Schema({
     licensePlate: {
         type: String,
         required: true,
-        trim: true,
-        unique: true,
+        trim: true
     },
     // Rental status
     rentalStatus: {
@@ -65,7 +64,7 @@ const carSchema = new mongoose.Schema({
     vehicleIdentificationNumber: {
         type: String,
         required: true,
-        trim: true,
+        trim: true
     },
     carType: {
         type: String,
