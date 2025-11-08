@@ -1,5 +1,5 @@
 import { resend } from "./config.js";
-import { verificationTokenEmailTemplate, WELCOME_EMAIL_TEMPLATE, getEmailContent } from "./email-template.js";
+import { verificationTokenEmailTemplate, getEmailContent, successResetTemplate, forgetPasswordTemplate } from "./email-template.js";
 import { buildPath } from "../src/utils/path.js";
 
 export const sendVerificationEmail = async (email, verificationToken, type = 'email', data = {}) => {
