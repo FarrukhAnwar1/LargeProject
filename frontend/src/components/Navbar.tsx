@@ -1,3 +1,5 @@
+import LogoImage from "../resources/pictures/logo.png";
+
 function Navbar() {
     function handleTitleClick() {
         const path = window.location.pathname;
@@ -9,8 +11,13 @@ function Navbar() {
     }
 
     return (
-        <div className='navbar !bg-linear-to-t from-[var(--muted)] to-[var(--muted2)]'>
-            <strong className="mr-auto pl-3 text-2xl hover:cursor-pointer" onClick={handleTitleClick}>CarStax</strong>
+        <div className="navbar flex items-center justify-start !bg-linear-to-t from-[var(--muted)] to-[var(--muted2)]">
+            <img
+                src={LogoImage}
+                className="h-12 w-auto hover:cursor-pointer"
+                onClick={handleTitleClick}
+                alt="Logo"
+            />
         </div>
     );
 }
