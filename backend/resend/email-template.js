@@ -264,7 +264,7 @@ export const forgetPasswordTemplate = `<!DOCTYPE html>
           <h1>Reset Your Password</h1>
 
           <div class="highlight-box">
-           Hi {{name}}, we received a request to reset your CarStax account password.
+           Hello {{name}}, we received a request to reset your CarStax account password.
            </div>
 
            <p>
@@ -411,7 +411,7 @@ export const successResetTemplate = `<!DOCTYPE html>
             <h1>Password Reset Successful</h1>
 
             <div class="highlight-box">
-                Hi {{name}}, your CarStax account password has been updated successfully.
+                Hello {{name}}, your CarStax account password has been updated successfully.
             </div>
 
             <p>

@@ -36,7 +36,7 @@ export const sendPasswordResetEmail = async(email, resetURL, name) => {
             from: "CarStax <noreply@farrukhanwar.site>",
             to: [email],
             subject: "Reset your Password",
-            html: forgetPasswordTemplate.replace("{{name}}", name).replace(/{{reset_link}}/g,resetURL),
+            html: forgetPasswordTemplate.replaceAll("{{name}}", name).replaceAll("{{reset_link}}", resetURL),
     });
 
     }catch (error){
@@ -50,7 +50,7 @@ export const sendResetSuccessEmail = async(email, name) =>{
             from: "CarStax <noreply@farrukhanwar.site>",
             to: [email],
             subject: "Password Reset Successful",
-            html: successResetTemplate.replace("{{name}}", name),
+            html: successResetTemplate.replaceAll("{{name}}", name),
     });
 
     }catch (error){

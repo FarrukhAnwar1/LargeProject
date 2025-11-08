@@ -337,7 +337,7 @@ export const forgotPassword = async (req, res) => {
         user.resetPasswordExpiresAt = resetPasswordExpiresAt;
 
         await user.save();
-        await sendPasswordResetEmail(user.email, buildPath(`/reset-password/${resetPasswordToken}`));//need to change this link in env to our reset password frontend
+        await sendPasswordResetEmail(user.email, buildPath(`reset-password/${resetPasswordToken}`), user.firstName);//need to change this link in env to our reset password frontend
 
             res.status(200).json({success: true, message: "Password reset email sent successfully"});
     }catch (error){
@@ -367,7 +367,7 @@ export const resetPassword = async (req, res) => {
         user.resetPasswordExpiresAt = undefined;
         await user.save();
 
-        await sendResetSuccessEmail(user.email);
+        await sendResetSuccessEmail(user.email, user.firstName);
         
         res.status(200).json({success: true, message: "Password reset successful"});
     }catch (error){
