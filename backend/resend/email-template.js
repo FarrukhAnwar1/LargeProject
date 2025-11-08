@@ -39,7 +39,7 @@ export const verificationTokenEmailTemplate = (type = 'email', data = {}) => `<!
     <link 
       rel="preload"
       as="image"
-      href="https://react-email-demo-c7nq3pwx3-resend.vercel.app/static/plaid-logo.png" 
+      href="https://i.postimg.cc/fbL1qK4Y/logo.png" 
     />
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
     <meta name="x-apple-disable-message-reformatting" />
@@ -67,7 +67,7 @@ export const verificationTokenEmailTemplate = (type = 'email', data = {}) => `<!
                   <td>
                     <img alt="Plaid"
                     height="88"
-                    src="https://react-email-demo-c7nq3pwx3-resend.vercel.app/static/plaid-logo.png"
+                    src="https://i.postimg.cc/fbL1qK4Y/logo.png"
                     style="display:block;outline:none;border:none;text-decoration:none;margin:0 auto" 
                     width="212" />
                     <p 
@@ -213,7 +213,7 @@ export const forgetPasswordTemplate = `<!DOCTYPE html>
         background-color: #22577A;
         color: #ffffff !important;
         padding: 12px 30px;
-        border-radius: 50px;
+        border-radius: 6px;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.5px;
@@ -257,7 +257,7 @@ export const forgetPasswordTemplate = `<!DOCTYPE html>
     <div class="container">
       <div class="content-box">
         <img
-          src="https://react-email-demo-c7nq3pwx3-resend.vercel.app/static/plaid-logo.png"
+          src="https://i.postimg.cc/fbL1qK4Y/logo.png"
           alt="CarStax"
           class="logo" />
 
@@ -404,7 +404,7 @@ export const successResetTemplate = `<!DOCTYPE html>
     <div class="container">
         <div class="content-box">
             <img
-              src="https://react-email-demo-c7nq3pwx3-resend.vercel.app/static/plaid-logo.png"
+              src="https://i.postimg.cc/fbL1qK4Y/logo.png"
               alt="CarStax"
               class="logo" />
 

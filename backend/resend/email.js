@@ -35,7 +35,7 @@ export const sendPasswordResetEmail = async(email, resetURL, name) => {
         const { data, error } = await resend.emails.send({
             from: "CarStax <noreply@farrukhanwar.site>",
             to: [email],
-            subject: "Reset your Password",
+            subject: "Reset Your Password",
             html: forgetPasswordTemplate.replaceAll("{{name}}", name).replaceAll("{{reset_link}}", resetURL),
     });
 
