@@ -1,5 +1,5 @@
 import { resend } from "./config.js";
-import { verificationTokenEmailTemplate, WELCOME_EMAIL_TEMPLATE, getEmailContent } from "./email-template.js";
+import { verificationTokenEmailTemplate, getEmailContent, successResetTemplate, forgetPasswordTemplate } from "./email-template.js";
 import { buildPath } from "../src/utils/path.js";
 
 export const sendVerificationEmail = async (email, verificationToken, type = 'email', data = {}) => {
@@ -29,44 +29,31 @@ export const sendVerificationEmail = async (email, verificationToken, type = 'em
 };
 
 
-export const sendWelcomeEmail = async(email,name)=> {
-    try{
-        const { data, error } = await resend.emails.send({
-            from: "CarStax <noreply@farrukhanwar.site>",
-            to: [email],
-            subject: "Welcome to CarStax",
-            html: WELCOME_EMAIL_TEMPLATE.replace("{name}", name),
-    });
 
-    }catch (error){
-
-    }
-}
-
-export const sendPasswordResetEmail = async(email, resetURL) => {
+export const sendPasswordResetEmail = async(email, resetURL, name) => {
     try{
         const { data, error } = await resend.emails.send({
             from: "CarStax <noreply@farrukhanwar.site>",
             to: [email],
             subject: "Reset your Password",
-            html: `Click <a href="${resetURL}">here</a> to reset your password`,
+            html: forgetPasswordTemplate.replace("{{name}}", name).replace(/{{reset_link}}/g,resetURL),
     });
 
     }catch (error){
         console.log("error sending reset email", error);
     }
-}
+};
 
-export const sendResetSuccessEmail = async(email) =>{
+export const sendResetSuccessEmail = async(email, name) =>{
      try{
         const { data, error } = await resend.emails.send({
             from: "CarStax <noreply@farrukhanwar.site>",
             to: [email],
             subject: "Password Reset Successful",
-            html: `Your password was reset successfully`,
+            html: successResetTemplate.replace("{{name}}", name),
     });
 
     }catch (error){
         console.log("error sending reset email", error);
     }
-}
+};

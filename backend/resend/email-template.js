@@ -91,7 +91,7 @@ export const verificationTokenEmailTemplate = (type = 'email', data = {}) => `<!
                           href="{verificationLink}"
                           target="_blank"
                           style="background-color:#22577A;
-                          color:#ffff;
+                          color:#fff;
                           padding:12px 30px;
                           border-radius:6px;
                           font-family:HelveticaNeue,Helvetica,Arial,sans-serif;
@@ -129,113 +129,305 @@ export const verificationTokenEmailTemplate = (type = 'email', data = {}) => `<!
     </tbody>
   </table>
 </body>
-</html>`;
+</html>`
 
-export const WELCOME_EMAIL_TEMPLATE = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html dir="ltr" lang="en">
+export const forgetPasswordTemplate = `<!DOCTYPE html>
+<html lang="en">
   <head>
-    <link
-      rel="preload"
-      as="image"
-      href="https://react-email-demo-c5c0ph259-resend.vercel.app/static/koala-logo.png" />
-    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="x-apple-disable-message-reformatting" />
-    <!--$-->
+    <title>Reset Your Password</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css?family=Nunito+Sans:400,600,700&display=swap");
+
+      body{
+        margin: 0;
+        padding: 0;
+        background-color : #22577A;
+        color: #333;
+        font-family: "Nunito Sans", Helvetica, Arial, sans-serif;
+      }
+
+      a{
+        color: #22577A;
+        text-decoration: none;
+      }
+
+      table{
+        border-collapse: collapse;
+      }
+
+      .container {
+        width: 100%;
+        background-color: #22577A;
+        text-align: center;
+        padding: 40px 0;
+      }
+      .content-box{
+        background-color: #C7F9CC;
+        border: 5px solid #EEE;
+        border-radius: 8px;
+        box-shadow: 0 10px 8px rgba(20, 50, 70, 0.15);
+        max-width: 420px;
+        margin: 0 auto;
+        padding: 50px 30px 60px;
+      }
+
+      .logo {
+        display:block;
+        margin:0 auto 20px;
+        height: 70px;
+      }
+
+      h1{
+        font-size: 22px;
+        font-weight: 700;
+        color: #000;
+        text-align: center;
+        margin-bottom: 16px;
+      }
+
+
+      p{
+        font-size: 15px;
+        line-height: 1.6;
+        color: #333;
+        margin: 12px 0;
+        text-align: left;
+      }
+
+      .highlight-box {
+        background-color: #FFF;
+        border-radius: 6px;
+        padding: 14px 16px;
+        margin: 18px 0;
+        color: #22577A;
+        font-weight: 600;
+        text-align: center;
+        line-height: 1.5;
+      }
+
+      .button{
+        display: inline-block; 
+        background-color: #22577A;
+        color: #ffffff !important;
+        padding: 12px 30px;
+        border-radius: 50px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 4px 6px rgba(34, 87, 122, 0.25);
+        transition: all 0.2s ease-in-out;
+        margin-top: 25px;
+      }
+
+      .button:hover{
+        background-color: #163E55;
+      }
+
+      .sub {
+        font-size: 13px;
+        color: #555;
+        text-align: center;
+        line-height: 1.5;
+        margin-top: 25px;
+      }
+
+      .footer {
+        font-size: 12px;
+        color: #FFF;
+        text-align: center;
+        margin-top:25px;
+        letter-spacing: 0.5px;
+        font-weight: 700;
+        text-transform:uppercase;
+      }
+
+      @media only screen and (max-width: 480px){
+        .content-box {
+          width: 90%;
+          padding: 40px 20px 50px;
+        }
+      }
+    </style>
   </head>
-  <body style="background-color:#ffffff">
-    <table
-      border="0"
-      width="100%"
-      cellpadding="0"
-      cellspacing="0"
-      role="presentation"
-      align="center">
-      <tbody>
-        <tr>
-          <td
-            style='background-color:#ffffff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif'>
-            <div
-              style="display:none;overflow:hidden;line-height:1px;opacity:0;max-height:0;max-width:0"
-              data-skip-in-text="true">
-              The sales intelligence platform that helps you uncover qualified
-              leads.
-              <div>
-                 ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿ ‌​‍‎‏﻿
-              </div>
+
+  <body>
+    <div class="container">
+      <div class="content-box">
+        <img
+          src="https://react-email-demo-c7nq3pwx3-resend.vercel.app/static/plaid-logo.png"
+          alt="CarStax"
+          class="logo" />
+
+          <h1>Reset Your Password</h1>
+
+          <div class="highlight-box">
+           Hi {{name}}, we received a request to reset your CarStax account password.
+           </div>
+
+           <p>
+            If you made this request, click the button below to choose a new password.
+            <strong>This link is only valid for the next 24 hours.</strong>
+          </p>
+
+          <a href="{{reset_link}}" class="button" target="_blank">Reset Password</a>
+
+          <p>
+            Didn't request a password reset? You can safely ignore this email. Your password won't change until you access the link above and create a new one.
+          </p>
+
+          <p class="sub">
+            If the button doesn't work, click this link to continue:
+            <br />
+            <a href="{{reset_link}}" style="color: #22577A;">{{reset_link}}</a>
+          </p>
+        </div>
+
+        <div class="footer">
+          Sent to you by CarStax
+          <br />
+          noreply@farrukhanwar.site
+        </div>
+      </div>
+    </body>
+  </html>`
+
+
+export const successResetTemplate = `<!DOCTYPE html>
+<html lang="en">
+  <head>
+      <meta charset="UTF-8"  />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <meta name="x-apple-disable-message-reformatting" />
+      <title>Password Reset Successful</title>
+      <style>
+        @import url("https://fonts.googleapis.com/css?family=Nunito+Sans:400,600,700&display=swap");
+
+      body{
+        margin: 0;
+        padding: 0;
+        background-color: #22577A;
+        color: #333;
+        font-family: "Nunito Sans", Helvetica, Arial, sans-serif;
+      }
+
+      a{
+        color: #22577A;
+        text-decoration: none;
+      }
+
+      table{
+        border-collapse: collapse;
+      }
+
+      .container {
+        width: 100%;
+        background-color: #22577A;
+        text-align: center;
+        padding: 40px 0;
+      }
+      .content-box{
+        background-color: #C7F9CC;
+        border: 5px solid #EEE;
+        border-radius: 8px;
+        box-shadow: 0 10px 8px rgba(20, 50, 70, 0.15);
+        max-width: 420px;
+        margin: 0 auto;
+        padding: 50px 30px 60px;
+      }
+
+      .logo {
+        display:block;
+        margin: 0 auto 20px;
+        height: 70px;
+      }
+
+      h1{
+        font-size: 22px;
+        font-weight: 700;
+        color: #000;
+        text-align: center;
+        margin-bottom: 16px;
+      }
+
+
+      p{
+        font-size: 15px;
+        line-height: 1.6;
+        color: #333;
+        margin: 12px 0;
+        text-align: left;
+      }
+
+      .highlight-box {
+        background-color: #FFF;
+        border-radius: 6px;
+        padding: 14px 16px;
+        margin: 18px 0;
+        color: #22577A;
+        font-weight: 600;
+        text-align: center;
+        line-height: 1.5;
+      }
+
+
+      .sub {
+        font-size: 13px;
+        color: #555;
+        text-align: center;
+        line-height: 1.5;
+        margin-top: 25px;
+      }
+
+      .footer {
+        font-size: 12px;
+        color: #FFF;
+        text-align: center;
+        margin-top:25px;
+        letter-spacing: 0.5px;
+        font-weight: 700;
+        text-transform:uppercase;
+      }
+
+      @media only screen and (max-width: 480px){
+        .content-box {
+          width: 90%;
+          padding: 40px 20px 50px;
+        }
+      }
+      </style>
+  </head>
+
+<body>
+    <div class="container">
+        <div class="content-box">
+            <img
+              src="https://react-email-demo-c7nq3pwx3-resend.vercel.app/static/plaid-logo.png"
+              alt="CarStax"
+              class="logo" />
+
+            <h1>Password Reset Successful</h1>
+
+            <div class="highlight-box">
+                Hi {{name}}, your CarStax account password has been updated successfully.
             </div>
-            <table
-              align="center"
-              width="100%"
-              border="0"
-              cellpadding="0"
-              cellspacing="0"
-              role="presentation"
-              style="max-width:37.5em;margin:0 auto;padding:20px 0 48px">
-              <tbody>
-                <tr style="width:100%">
-                  <td>
-                    <img
-                      alt="Koala"
-                      height="50"
-                      src="https://react-email-demo-c5c0ph259-resend.vercel.app/static/koala-logo.png"
-                      style="display:block;outline:none;border:none;text-decoration:none;margin:0 auto"
-                      width="170" />
-                    <p
-                      style="font-size:16px;line-height:26px;margin-top:16px;margin-bottom:16px">
-                      Hi
-                      <!-- -->{name}<!-- -->,
-                    </p>
-                    <p
-                      style="font-size:16px;line-height:26px;margin-top:16px;margin-bottom:16px">
-                      Welcome to Koala, the sales intelligence platform that
-                      helps you uncover qualified leads and close deals faster.
-                    </p>
-                    <table
-                      align="center"
-                      width="100%"
-                      border="0"
-                      cellpadding="0"
-                      cellspacing="0"
-                      role="presentation"
-                      style="text-align:center">
-                      <tbody>
-                        <tr>
-                          <td>
-                            <a
-                              href="https://getkoala.com"
-                              style="line-height:100%;text-decoration:none;display:block;max-width:100%;mso-padding-alt:0px;background-color:#5F51E8;border-radius:3px;color:#fff;font-size:16px;text-align:center;padding:12px;padding-top:12px;padding-right:12px;padding-bottom:12px;padding-left:12px"
-                              target="_blank"
-                              ><span
-                                ><!--[if mso]><i style="mso-font-width:300%;mso-text-raise:18" hidden>&#8202;&#8202;</i><![endif]--></span
-                              ><span
-                                style="max-width:100%;display:inline-block;line-height:120%;mso-padding-alt:0px;mso-text-raise:9px"
-                                >Get started</span
-                              ><span
-                                ><!--[if mso]><i style="mso-font-width:300%" hidden>&#8202;&#8202;&#8203;</i><![endif]--></span
-                              ></a
-                            >
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                    <p
-                      style="font-size:16px;line-height:26px;margin-top:16px;margin-bottom:16px">
-                      Best,<br />The Koala team
-                    </p>
-                    <hr
-                      style="width:100%;border:none;border-top:1px solid #eaeaea;border-color:#cccccc;margin:20px 0" />
-                    <p
-                      style="font-size:12px;line-height:24px;color:#8898aa;margin-top:16px;margin-bottom:16px">
-                      470 Noor Ave STE B #1148, South San Francisco, CA 94080
-                    </p>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <!--/$-->
+
+            <p>
+              If you did not perform this action, please contact our support team immediately.
+            </p>
+
+            <p class="sub">
+              Thank you for using CarStax.
+            </p>
+        </div>
+
+        <div class="footer">
+          Sent to you by CarStax
+          <br />
+          noreply@farrukhanwar.site
+        </div>
+    </div>
   </body>
 </html>`

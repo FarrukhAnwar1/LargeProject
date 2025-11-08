@@ -365,7 +365,6 @@ export const resetPassword = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         user.passwordHash = hashedPassword;
         user.resetPasswordExpiresAt = undefined;
-        user.resetPasswordExpiresAt = undefined;
         await user.save();
 
         await sendResetSuccessEmail(user.email);
