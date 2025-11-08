@@ -2,7 +2,7 @@ import User from "../../models/user.js";
 import bcrypt from 'bcryptjs';
 import { generateVerificationToken } from "../utils/generateVerificationToken.js";
 import { generateJWTToken } from "../utils/generateJWTToken.js";
-import { sendVerificationEmail, sendWelcomeEmail, sendPasswordResetEmail, sendResetSuccessEmail} from "../../resend/email.js";
+import { sendVerificationEmail, sendPasswordResetEmail, sendResetSuccessEmail} from "../../resend/email.js";
 import crypto from "crypto";
 import { buildPath } from "../utils/path.js";
 
