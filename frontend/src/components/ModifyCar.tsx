@@ -424,16 +424,14 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
             <div className='grid grid-cols-2 gap-4 pt-4'>
                 <div>
                     <label className='block font-medium'>Year</label>
-                    <input
-                        type="number"
-                        min="1900"
+                    <NumericInput
+                        value={carForm.year ? Number(carForm.year) : 0}
+                        onChange={(num) => setCarField('year', num.toString())}
+                        placeholder="2025"
+                        className="p-2 w-full"
+                        min={0}
                         max={new Date().getFullYear() + 1}
-                        name='year'
-                        value={carForm.year}
-                        onChange={handleCarChange}
-                        onWheel={e => e.currentTarget.blur()}
-                        className='p-2 w-full'
-                        placeholder='2025'
+                        hideThousandSeparator
                     />
                 </div>
                 <div>
@@ -573,7 +571,7 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
                                 onChange={(num) => setRentalField('rentalRatePerDay', num)}
                                 allowDecimal
                                 showCurrency
-                                placeholder="0.00"
+                                placeholder="$0.00"
                                 className="p-2 w-full"
                                 step={0.01}
                             />
