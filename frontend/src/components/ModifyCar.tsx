@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { buildPath } from '../utils/Path';
 import ConfirmModal from './ConfirmModal';
 import TileCarousel from './TileCarousel';
+import NumericInput from './NumericInput';
 
 // Configure axios defaults for this component
 axios.defaults.withCredentials = true;
@@ -423,30 +424,25 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
             <div className='grid grid-cols-2 gap-4 pt-4'>
                 <div>
                     <label className='block font-medium'>Year</label>
-                    <input 
-                        type="number" 
-                        min="1900" 
-                        max={new Date().getFullYear() + 1} 
-                        name='year' 
-                        value={carForm.year} 
-                        onChange={handleCarChange} 
+                    <input
+                        type="number"
+                        min="1900"
+                        max={new Date().getFullYear() + 1}
+                        name='year'
+                        value={carForm.year}
+                        onChange={handleCarChange}
                         onWheel={e => e.currentTarget.blur()}
-                        className='p-2 w-full' 
-                        placeholder='2025' 
+                        className='p-2 w-full'
+                        placeholder='2025'
                     />
                 </div>
                 <div>
                     <label className='block font-medium'>Mileage</label>
-                    <input
-                        type="number"
-                        min="0"
-                        name='mileage'
-                        value={carForm.mileage || ''}
-                        onChange={handleCarChange}
-                        onWheel={e => e.currentTarget.blur()}
-                        className='p-2 w-full'
+                    <NumericInput
+                        value={carForm.mileage}
+                        onChange={(num) => setCarField('mileage', num)}
                         placeholder="0"
-                        onFocus={(e) => e.target.value === '0' && e.target.select()}
+                        className="p-2 w-full"
                     />
                 </div>
             </div>
@@ -571,18 +567,15 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
 
                     <div className='grid grid-cols-2 gap-4 pt-3'>
                         <div>
-                            <label className='block'>Rate Per Day ($)</label>
-                            <input
-                                type="number"
-                                min="0"
-                                step="0.01"
-                                placeholder="0"
-                                name='rentalRatePerDay'
-                                value={rentalForm.rentalRatePerDay || ''}
-                                onChange={handleRentalChange}
-                                onWheel={e => e.currentTarget.blur()}
-                                className='p-2 w-full'
-                                onFocus={(e) => e.target.value === '0' && e.target.select()}
+                            <label className='block'>Rate Per Day</label>
+                            <NumericInput
+                                value={rentalForm.rentalRatePerDay}
+                                onChange={(num) => setRentalField('rentalRatePerDay', num)}
+                                allowDecimal
+                                showCurrency
+                                placeholder="0.00"
+                                className="p-2 w-full"
+                                step={0.01}
                             />
                         </div>
                         <div>
