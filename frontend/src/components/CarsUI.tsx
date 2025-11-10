@@ -200,7 +200,7 @@ function CarsUI() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {cars.map(car => (
                             <div key={car._id} className="relative bg-white rounded-lg shadow-md p-4">
-                                <div className={`absolute -right-2 -top-2 h-5 w-5 rounded-full grid place-items-center ${
+                                <div className={`absolute -right-2 -top-2 h-6 w-10 rounded-full grid place-items-center ${
                                     car.rentalStatus === 'available' ? 'bg-green-600' :
                                     car.rentalStatus === 'rented' ? 'bg-red-500' :
                                     'bg-yellow-500'
@@ -208,7 +208,7 @@ function CarsUI() {
                                         <img src={
                                             car.rentalStatus === 'available' ? AvailableIcon : 
                                             car.rentalStatus === 'rented' ? RentedIcon :
-                                            MaintenanceIcon} className="invert h-4 w-4"></img>
+                                            MaintenanceIcon} className="invert h-5 w-5"></img>
                                     </div>
                                 <h3 className="text-xl font-semibold mb-2">{car.year} {car.make} {car.model}</h3>
                                 <div className="space-y-2">
