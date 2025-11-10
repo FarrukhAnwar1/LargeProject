@@ -18,14 +18,6 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 
 describe('Auth Routes', () => {
-    beforeAll(async () => {
-        await mongoose.connect(process.env.MONGO_TEST_URI || 'mongodb://localhost:27017/test');
-    });
-
-    afterAll(async () => {
-        await mongoose.connection.close();
-    });
-
     beforeEach(async () => {
         await User.deleteMany({});
     });

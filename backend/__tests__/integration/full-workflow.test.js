@@ -18,18 +18,10 @@ app.use('/api/car', carRoutes);
 app.use('/api/rental', rentalRoutes);
 
 describe('Full Application Workflow', () => {
-    beforeAll(async () => {
-        await mongoose.connect(process.env.MONGO_TEST_URI || 'mongodb://localhost:27017/test');
-    });
-
     beforeEach(async () => {
         await User.deleteMany({});
         await Car.deleteMany({});
         await Rental.deleteMany({});
-    });
-
-    afterAll(async () => {
-        await mongoose.connection.close();
     });
 
     it('should complete full rental workflow', async () => {
