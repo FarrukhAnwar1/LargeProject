@@ -22,11 +22,13 @@ jobs:
         with:
           node-version: 24.10.0
 
-    #   - name: Install and test frontend
-    #     run: |
-    #       cd frontend
-    #       npm ci
-    #       npm test --if-present
+      - name: Create .env.test file
+        run: |
+          cd backend
+          echo "MONGO_TEST_URI=${{ secrets.MONGO_TEST_URI }}" >> .env.test
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env.test
+          echo "RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}" >> .env.test
+          echo "PORT=${{ secrets.PORT }}" >> .env.test
 
       - name: Install and test backend
         run: |
