@@ -3,6 +3,10 @@ import { buildPath } from '../utils/Path';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+import AvailableIcon from '../resources/icons/available.png';
+import RentedIcon from '../resources/icons/rented.png';
+import MaintenanceIcon from '../resources/icons/maintenance.png';
+
 interface Car {
     _id: string;
     make: string;
@@ -195,7 +199,17 @@ function CarsUI() {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {cars.map(car => (
-                            <div key={car._id} className="bg-white rounded-lg shadow-md p-4">
+                            <div key={car._id} className="relative bg-white rounded-lg shadow-md p-4">
+                                <div className={`absolute -right-2 -top-2 h-5 w-5 rounded-full grid place-items-center ${
+                                    car.rentalStatus === 'available' ? 'bg-green-600' :
+                                    car.rentalStatus === 'rented' ? 'bg-red-500' :
+                                    'bg-yellow-500'
+                                    }`}>
+                                        <img src={
+                                            car.rentalStatus === 'available' ? AvailableIcon : 
+                                            car.rentalStatus === 'rented' ? RentedIcon :
+                                            MaintenanceIcon} className="invert h-4 w-4"></img>
+                                    </div>
                                 <h3 className="text-xl font-semibold mb-2">{car.year} {car.make} {car.model}</h3>
                                 <div className="space-y-2">
                                     <p><span className="font-medium">Color:</span> {car.color}</p>
