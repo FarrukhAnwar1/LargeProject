@@ -83,7 +83,6 @@ export const deleteRental =  async(req,res) => {
         await Rental.findByIdAndDelete(id);
         res.status(200).json({success:true, message: "Rental deleted successfully"});
     }catch(error){
-        console.log(error);
         res.status(400).json({success: false, message:error.message});
     }
 };
@@ -133,7 +132,6 @@ export const deleteRentalsByCar = async (req, res) => {
             message: `Deleted ${result.deletedCount} rental(s) for car ${carID}`
         });
     } catch (error) {
-        console.error(error);
         res.status(400).json({success: false, message: error.message});
     }
 };
@@ -162,7 +160,6 @@ export const getRentalsByCar = async(req, res)=> {
         
         res.status(200).json({success: true, rentals});
     }catch(error){
-        console.error(error);
         res.status(400).json({success: false, message: error.message});
     }
 }

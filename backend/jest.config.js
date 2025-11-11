@@ -11,7 +11,8 @@ export default {
         'src/**/*.js',
         'models/**/*.js',
         '!src/**/*.test.js',
-        '!**/node_modules/**'
+        '!src/config/**/*.js',
+        '!**/node_modules/**',
     ],
     verbose: true
 };
