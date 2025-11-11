@@ -4,6 +4,45 @@
     https://coolors.co/22577a-2d7d90-38a3a5-48b89f-57cc99-6cdd99-80ed99-a4f3b3-b6f6c0-c7f9cc
 */
 
+@keyframes raise {
+    0% {
+        transform: translateY(0px);
+    }
+
+    100% {
+        transform: translateY(-2.5px);
+    }
+}
+
+:root {
+    --animate-subtle-raise: raise 0.5s linear forwards;
+    --bg: #B6F6C0;
+    --card: #F8FAFC;
+    --text: #1E293B;
+    --muted: #57CC99;
+    --muted-text: #64748B;
+    --muted2: #48B89F;
+    --muted3: #38A3A5;
+    --line: #2D7D90;
+    --line-faded: #2d7c901e;
+    --primary: #22577A;
+    --primary-text: #ffffff;
+    --error-text: #ca0000;
+    --success: #1e7a3a;
+    /* dark green for success messages/buttons */
+    --shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+
+    font-family: ui-sans-serif, system-ui, Segoe UI, Roboto, Arial;
+    font-weight: 400;
+
+    --radius: 14px;
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
 /* Date input styling */
 input[type="date"] {
     position: relative;
@@ -74,45 +113,6 @@ input[type="date"]:disabled::-webkit-calendar-picker-indicator {
     input[type="date"]:disabled {
         background-image: none;
     }
-}
-
-@keyframes raise {
-    0% {
-        transform: translateY(0px);
-    }
-
-    100% {
-        transform: translateY(-2.5px);
-    }
-}
-
-:root {
-    --animate-subtle-raise: raise 0.5s linear forwards;
-    --bg: #B6F6C0;
-    --card: #F8FAFC;
-    --text: #1E293B;
-    --muted: #57CC99;
-    --muted-text: #64748B;
-    --muted2: #48B89F;
-    --muted3: #38A3A5;
-    --line: #2D7D90;
-    --line-faded: #2d7c901e;
-    --primary: #22577A;
-    --primary-text: #ffffff;
-    --error-text: #ca0000;
-    --success: #1e7a3a;
-    /* dark green for success messages/buttons */
-    --shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-
-    font-family: ui-sans-serif, system-ui, Segoe UI, Roboto, Arial;
-    font-weight: 400;
-
-    --radius: 14px;
-
-    font-synthesis: none;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
 }
 
 .navbar {

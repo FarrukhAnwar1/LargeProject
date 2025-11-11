@@ -1,7 +1,5 @@
-// __tests__/integration/full-workflow.test.js
 import request from 'supertest';
 import express from 'express';
-import mongoose from 'mongoose';
 import authRoutes from '../../src/routes/auth-route.js';
 import carRoutes from '../../src/routes/carRoutes.js';
 import rentalRoutes from '../../src/routes/rentalRoutes.js';

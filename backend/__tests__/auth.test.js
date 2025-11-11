@@ -1,6 +1,5 @@
 import request from 'supertest';
 import express from 'express';
-import mongoose from 'mongoose';
 import { jest } from '@jest/globals';
 import authRoutes from '../src/routes/auth-route.js';
 import User from '../models/user.js';
