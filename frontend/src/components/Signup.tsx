@@ -272,7 +272,7 @@ function Signup() {
                     <button
                         className='w-full bg-linear-65 from-[var(--muted2)] to-[var(--muted)]'
                         type="button"
-                        onClick={() => window.open('https://yourappdownloadlink.com', '_blank')}
+                        onClick={() => window.open('https://drive.google.com/drive/folders/1qNT9l-qq3Bt2LJlFM_ufYQ1XsjS6vdxv', '_blank')}
                     >
                         Download the App
                     </button>

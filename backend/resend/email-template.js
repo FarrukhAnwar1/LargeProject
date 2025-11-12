@@ -25,8 +25,8 @@ export const getEmailContent = (type, data = {}) => {
             const isCompanyMember = data.userType === 'company_member';
             return {
                 title: 'Verify Your Email',
-                message: `Click the button below to finish setting up your account${isCompanyMember ? 
-                    '. Note: After email verification, you will need admin approval from your company administrator. ' +
+                message: `Click the button below to finish setting up your account. ${isCompanyMember ? 
+                    'Note: After email verification, you will need admin approval from your company administrator. ' +
                     'Please contact them if you do not receive an approval notification within 24 hours.' : ''}`,
                 buttonText: 'Verify'
             };
@@ -36,7 +36,7 @@ export const getEmailContent = (type, data = {}) => {
 export const verificationTokenEmailTemplate = (type = 'email', data = {}) => `<!DOCTYPE html>
 <html dir="ltr" lang="en">
   <head>
-    <link rel="preload" as="image" href="https://i.postimg.cc/fbL1qK4Y/logo.png" />
+    <link rel="preload" as="image" href="https://farrukhanwar.site/images/logo.png" />
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
     <meta name="x-apple-disable-message-reformatting" />
     <style>
@@ -52,7 +52,7 @@ export const verificationTokenEmailTemplate = (type = 'email', data = {}) => `<!
               <tbody>
                 <tr>
                   <td>
-                    <img alt="CarStax" height="70" src="https://i.postimg.cc/fbL1qK4Y/logo.png" style="display:block;outline:none;border:none;text-decoration:none;margin:0 auto;" />
+                    <img alt="CarStax" height="70" src="https://farrukhanwar.site/images/logo.png" style="display:block;outline:none;border:none;text-decoration:none;margin:0 auto;" />
                     <h1 style="font-size:22px;font-weight:700;color:#000;margin:16px 0 24px;text-transform:none;text-align:center;"> ${getEmailContent(type, data).title} </h1>
                     <p style="font-size:15px;line-height:1.6;color:#333;margin:12px 0;text-align:left;"> ${getEmailContent(type, data).message} </p>
                     <table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin:20px auto 30px;text-align:center;">
@@ -216,7 +216,7 @@ export const forgetPasswordTemplate = `<!DOCTYPE html>
     <div class="container">
       <div class="content-box">
         <img
-          src="https://i.postimg.cc/fbL1qK4Y/logo.png"
+          src="https://farrukhanwar.site/images/logo.png"
           alt="CarStax"
           class="logo" />
 
@@ -363,7 +363,7 @@ export const successResetTemplate = `<!DOCTYPE html>
     <div class="container">
         <div class="content-box">
             <img
-              src="https://i.postimg.cc/fbL1qK4Y/logo.png"
+              src="https://farrukhanwar.site/images/logo.png"
               alt="CarStax"
               class="logo" />
 
