@@ -36,99 +36,58 @@ export const getEmailContent = (type, data = {}) => {
 export const verificationTokenEmailTemplate = (type = 'email', data = {}) => `<!DOCTYPE html>
 <html dir="ltr" lang="en">
   <head>
-    <link 
-      rel="preload"
-      as="image"
-      href="https://i.postimg.cc/fbL1qK4Y/logo.png" 
-    />
+    <link rel="preload" as="image" href="https://i.postimg.cc/fbL1qK4Y/logo.png" />
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
     <meta name="x-apple-disable-message-reformatting" />
+    <style>
+      @import url("https://fonts.googleapis.com/css?family=Nunito+Sans:400,600,700&display=swap");
+    </style>
   </head>
-  <body style="background-color:#ffffff">
-    <table 
-    border="0" 
-    width="100%" 
-    cellpadding="0" 
-    cellspacing="0" 
-    role="presentation" 
-    align="center">
+  <body style="background-color:#22577A; margin:0; font-family:'Nunito Sans', Helvetica, Arial, sans-serif;">
+    <table border="0" width="100%" cellpadding="0" cellspacing="0" role="presentation" align="center">
       <tbody>
         <tr>
-          <td style="background-color:#22577A;font-family:HelveticaNeue,Helvetica,Arial,sans-serif">
-            <table align="center"
-            width="100%"
-            border="0"
-            cellpadding="0"
-            cellspacing="0"
-            role="presentation" 
-            style="max-width:360px;background-color:#C7F9CC;border:5px solid #eee;border-radius:5px;box-shadow:0 10px 5px rgba(20,50,70,.2);margin-top:20px;margin:0 auto;padding:68px 0 130px">
+          <td style="background-color:#22577A;">
+            <table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="max-width:420px;background-color:#C7F9CC;border:5px solid #EEE;border-radius:8px;box-shadow:0 10px 8px rgba(20,50,70,0.15);margin:20px auto;padding:50px 30px 60px;text-align:center;">
               <tbody>
-                <tr style="width:100%">
+                <tr>
                   <td>
-                    <img alt="Plaid"
-                    height="88"
-                    src="https://i.postimg.cc/fbL1qK4Y/logo.png"
-                    style="display:block;outline:none;border:none;text-decoration:none;margin:0 auto" 
-                    width="212" />
-                    <p 
-                    style="font-size:20px;line-height:1.4;color:#000;font-weight:700;font-family:HelveticaNeue,Helvetica,Arial,sans-serif;letter-spacing:0;margin:16px 16px 24px 16px;text-transform:uppercase;text-align:center">${getEmailContent(type, data).title}</p>
-                    <h1 
-                    style="color:#000;display:block;font-family:HelveticaNeue-Medium,Helvetica,Arial,sans-serif;font-size:18px;font-weight:500;line-height:1.6;margin:0 24px 24px;text-align:center">${getEmailContent(type, data).message}</h1>
-                    
-                    <!--The table-->
-                    <table 
-                    align="center"
-                    width="100%" 
-                    border="0" 
-                    cellpadding="0" 
-                    cellspacing="0" 
-                    role="presentation" 
-                    style="margin:20px auto 30px;text-align:center;">
+                    <img alt="CarStax" height="70" src="https://i.postimg.cc/fbL1qK4Y/logo.png" style="display:block;outline:none;border:none;text-decoration:none;margin:0 auto;" />
+                    <h1 style="font-size:22px;font-weight:700;color:#000;margin:16px 0 24px;text-transform:none;text-align:center;"> ${getEmailContent(type, data).title} </h1>
+                    <p style="font-size:15px;line-height:1.6;color:#333;margin:12px 0;text-align:left;"> ${getEmailContent(type, data).message} </p>
+                    <table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin:20px auto 30px;text-align:center;">
                       <tbody>
                         <tr>
                           <td align="center">
-                          <a
-                          href="{verificationLink}"
-                          target="_blank"
-                          style="background-color:#22577A;
-                          color:#fff;
-                          padding:12px 30px;
-                          border-radius:6px;
-                          font-family:HelveticaNeue,Helvetica,Arial,sans-serif;
-                          font-weight:700;
-                          text-decoration:none;
-                          text-transform:uppercase;
-                          letter-spacing:0.5px;
-                          display:inline-block;">
-                          ${getEmailContent(type, data).buttonText}
-                          </a>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-
-                  <!--verification text-->
-                  <p
-                  style="font-size:14px;line-height:20px;color:#444;font-family:HelveticaNeue,Helvetica,Arial,sans-serif;text-align:center;padding: 0 20px;">
-                  If the button doesn't work, click or manually enter this link:
-                  <br/>
-                  <a href="{verificationLink}" style="color:#22577A;">
-                  {verificationLink}
-                  </a>
-                  </p>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-              <p
-            style="font-size:12px;line-height:23px;color:#fff;font-weight:800;letter-spacing:0;margin:20px 0;font-family:HelveticaNeue,Helvetica,Arial,sans-serif;text-align:center;text-transform:uppercase;">
-            Sent to you by CarStax.
-          </p>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</body>
+                            <a href="{verificationLink}" target="_blank" style="background-color:#22577A;
+                                      color:#fff;
+                                      padding:12px 30px;
+                                      border-radius:6px;
+                                      font-family:'Nunito Sans', Helvetica, Arial, sans-serif;
+                                      font-weight:700;
+                                      text-decoration:none;
+                                      text-transform:uppercase;
+                                      letter-spacing:0.5px;
+                                      display:inline-block;
+                                      box-shadow:0 4px 6px rgba(34,87,122,0.25);
+                                      transition: all 0.2s ease-in-out;"> ${getEmailContent(type, data).buttonText} </a>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <p style="font-size:13px;line-height:1.5;color:#555;text-align:center;margin-top:25px;"> If the button doesn't work, click or manually enter this link: <br />
+                      <a href="{verificationLink}" style="color:#22577A;"> {verificationLink} </a>
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <p style="font-size:12px;line-height:1.5;color:#FFF;font-weight:700;letter-spacing:0.5px;margin:25px 0;text-align:center;text-transform:uppercase;"> Sent to you by CarStax <br /> noreply@farrukhanwar.site </p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
 </html>`
 
 export const forgetPasswordTemplate = `<!DOCTYPE html>
