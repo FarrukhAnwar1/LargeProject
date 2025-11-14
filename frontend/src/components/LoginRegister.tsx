@@ -87,7 +87,7 @@ function LoginRegister() {
                 />
             </div>
 
-            <div className='text-right'>
+            <div className='text-right mt-1.5'>
                 <a href='' className='font-medium text-[var(--primary)] hover:underline'>Forgot Password?</a>
             </div>
 

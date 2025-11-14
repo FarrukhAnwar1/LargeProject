@@ -31,9 +31,9 @@ function LoginRegisterPage() {
   }, []);
 
   return (
-    <div>
+    <main>
       <LoginRegister />
-    </div>
+    </main>
   );
 }
 
