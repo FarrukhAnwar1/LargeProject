@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import LoginRegister from '../components/LoginRegister.tsx';
-import LoginImage from '../resources/pictures/login.jpeg';
+import LoginImage from '../resources/pictures/login_condensed.webp';
 
 function LoginRegisterPage() {
   useEffect(() => {

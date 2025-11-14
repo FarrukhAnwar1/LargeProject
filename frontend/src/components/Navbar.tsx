@@ -1,4 +1,4 @@
-import LogoImage from "../resources/pictures/logo.png";
+import LogoImage from "../resources/pictures/logo_condensed.webp";
 
 function Navbar() {
     function handleTitleClick() {
