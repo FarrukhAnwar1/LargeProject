@@ -289,7 +289,7 @@ const ViewCar = ({ carId }: ViewCarProps) => {
             <div className='pt-6 flex gap-4'>
                 <button
                     className='flex-1 bg-linear-65 from-[var(--primary)] to-[var(--muted)] flex items-center justify-center gap-2'
-                    onClick={() => navigate(`/car/edit/${carId}`)}
+                    onClick={() => navigate(`/cars/${carId}`)}
                 >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
