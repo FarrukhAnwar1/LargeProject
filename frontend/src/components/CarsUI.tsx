@@ -111,6 +111,10 @@ function CarsUI() {
         navigate('/cars/add');
     };
 
+    const handleCarDeleted = () => {
+        loadFilteredCars();
+    }
+
     return (
         <div className="container mx-auto p-4">
             {loading ? (
@@ -200,7 +204,7 @@ function CarsUI() {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {cars.map(car => (
-                            <CarCard key={car._id} {...car} />
+                            <CarCard key={car._id} onDelete={handleCarDeleted} car={car}  />
                             // <div key={car._id} className="relative bg-white rounded-lg shadow-md p-4">
                             //     <div className={`absolute -right-2 -top-2 h-6 w-10 rounded-full grid place-items-center ${
                             //         car.rentalStatus === 'available' ? 'bg-green-600' :

@@ -32,7 +32,12 @@ type RenterInfo = {
     _id?: string; // Rental ID for updates
 };
 
-const CarCard = (car: Car) => {
+interface CarCardProps {
+    car: Car;
+    onDelete: () => void;
+}
+
+const CarCard = ({car, onDelete} : CarCardProps) => {
     const navigate = useNavigate();
     const [renter, setRenter] = useState<RenterInfo | null>(null);
 
@@ -41,7 +46,6 @@ const CarCard = (car: Car) => {
             // First delete all rentals associated with this car
             try {
                 await axios.delete(buildPath(`api/rental/car/${car._id}`));
-                console.log('Successfully deleted all rentals for car:', car._id);
             } catch (err) {
                 // Ignore 404 errors (no rentals found)
                 if (!(err instanceof AxiosError) || err.response?.status !== 404) {
@@ -51,15 +55,13 @@ const CarCard = (car: Car) => {
 
             // Then delete the car
             await axios.delete(buildPath(`api/car/${car._id}`));
-            // setMessage('Car and associated rentals deleted.');
-            // setShowSuccessModal(true);
+
+            onDelete();
         } catch (err) {
             console.error('Error during deletion:', err);
-            // if (err instanceof AxiosError && err?.response?.data?.message) setMessage(err.response.data.message);
-            // else setMessage('Failed to delete car.');
+ 
         } finally {
-            // setLoading(false);
-            // setShowDeleteConfirm(false);
+            console.log('Deletion process completed.');
         }
     };
 
@@ -68,9 +70,10 @@ const CarCard = (car: Car) => {
             if(car.rentalStatus !== 'rented') return;
             const fetchRentalInfo = async () => {
                 // Any side effects if needed
-                const rentRes = await axios.get(buildPath(`api/rental/${car._id}?current=true`));
+                const rentRes = await axios.get(buildPath(`api/rental/${car._id}`));
                 const rentals = rentRes.data?.rentals;
                 const currentRental = rentals[0];
+                console.log(currentRental);
                 setRenter({
                     renterName: currentRental.renterName ?? '',
                     dateRentedOut: currentRental.dateRentedOut ? new Date(currentRental.dateRentedOut).toISOString().slice(0, 10) : '',
@@ -111,21 +114,21 @@ const CarCard = (car: Car) => {
     
     return (
         <div key={car._id} className="relative bg-white rounded-lg shadow-md p-4 pl-3 pb-2">
-            <div className="absolute top-4 right-4">
+            <div className="absolute top-0 right-0">
                 <div className="group relative">
                     <div className="p-2 transition bg-transparent hover:bg-transparent focus:outline-none">
                         <svg className="w-5 h-5 text-black" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
                         </svg>
                     </div>
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
+                    <div className="absolute right-0 mt-0 w-48 bg-gray-50 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
                         <div onClick={() => navigate(`/cars/${car._id}`)} className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-200 cursor-pointer">View Data</div>
                         <div className="border-t mx-2 border-gray-300"></div>
                         <div onClick={() => navigate(`/cars/${car._id.toString()}`)} className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-200 cursor-pointer">Edit Data</div>
                         <div onClick={() => {if(confirm('Delete this car?')) { doDelete() }}} className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 cursor-pointer">Delete</div>
                     </div>
-                    </div>
                 </div>
+            </div>
             <div className="flex justify-between w-full gap-4">
                 <div>
                     <h3 className="text-xl font-semibold">{car.make} {car.model}</h3>
