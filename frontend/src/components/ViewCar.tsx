@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { buildPath } from '../utils/Path';
 
 // Configure axios defaults for this component
@@ -10,7 +10,7 @@ type ViewCarProps = {
     carId?: string;
 };
 
-type CarData = {
+type Car = {
     _id: string;
     licensePlate: string;
     year: number;
@@ -36,9 +36,11 @@ type RentalData = {
     notes: string;
 };
 
-const ViewCar = ({ carId }: ViewCarProps) => {
+const ViewCar = () => {
+    const { carId } = useParams<{ carId: string }>();
+
     const navigate = useNavigate();
-    const [carData, setCarData] = useState<CarData | null>(null);
+    const [carData, setCarData] = useState<Car | null>(null);
     const [rentalData, setRentalData] = useState<RentalData | null>(null);
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState<string>('');
@@ -64,11 +66,11 @@ const ViewCar = ({ carId }: ViewCarProps) => {
     const getStatusColor = (status: string): string => {
         switch (status) {
             case 'available':
-                return 'bg-green-100 text-green-800';
+                return 'bg-green-600 text-green-100';
             case 'rented':
-                return 'bg-blue-100 text-blue-800';
+                return 'bg-red-500 text-red-100';
             case 'maintenance':
-                return 'bg-orange-100 text-orange-800';
+                return 'bg-yellow-500 text-black';
             default:
                 return 'bg-gray-100 text-gray-800';
         }
@@ -76,25 +78,20 @@ const ViewCar = ({ carId }: ViewCarProps) => {
 
     useEffect(() => {
         (async () => {
+            console.log("Fetching data for car ID:", carId);
             try {
                 setLoading(true);
 
-                const carRes = await axios.get(buildPath('api/car'));
-                console.log('Car response:', carRes.data); // Debug log
-                
-                const cars = carRes.data?.cars;
-                console.log('Cars data:', cars[0]); // Debug logurn;
-                const car = cars[0];
-                
+                const carRes = await axios.get<{ success: boolean; cars: Car[] }>(buildPath('api/car'));
+                const car = carRes.data?.cars?.filter(c => c._id === carId?.trim())[0];
+                console.log("same:" , carId, car?._id);
                 if (car) {
                     setCarData(car);
                 } else {
-                    console.error('Car not found. Looking for ID:', carId);
                     setMessage('Car not found.');
+                    setCarData(null);
                     return;
                 }
-
-
                 // Get rental info if car is rented
                 try {
                     const rentRes = await axios.get(buildPath(`api/rental/${carId}`));
@@ -216,7 +213,7 @@ const ViewCar = ({ carId }: ViewCarProps) => {
             <div className='pt-4'>
                 <label className='block text-sm text-gray-600 font-medium mb-2'>Rental Status</label>
                 <div className={`p-3 rounded border inline-block font-medium ${getStatusColor(carData.rentalStatus)}`}>
-                    {rentalStatusOptions[carData.rentalStatus] || carData.rentalStatus}
+                    {carData.rentalStatus ? (rentalStatusOptions[carData.rentalStatus] || carData.rentalStatus) : 'N/A'}
                 </div>
             </div>
 
