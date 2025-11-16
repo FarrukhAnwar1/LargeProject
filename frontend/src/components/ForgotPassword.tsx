@@ -8,8 +8,6 @@ function ForgotPassword() {
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
     const [errors, setErrors] = useState<string[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [emailSent, setEmailSent] = useState<boolean>(false);
     
 
     const handleSubmit = async (e?: React.FormEvent) => {
@@ -24,7 +22,6 @@ function ForgotPassword() {
             return;
         }
 
-        setLoading(true);
         try {
             const payload = { 
                 email: email.trim(), 
@@ -33,11 +30,9 @@ function ForgotPassword() {
                 headers: { 'Content-Type': 'application/json' } 
             });
             if (res?.status === 200 || res?.data?.success) {
-                setEmailSent(true);
                 setMessage(res?.data?.message || "Password reset email sent successfully. Check your email to reset your password.");
                 
             } else {
-                setEmailSent(false);
                 setMessage(res?.data?.message || 'Password reset email failed to send.');
             }
         } catch (err: unknown) {
@@ -49,10 +44,7 @@ function ForgotPassword() {
             } else if (err instanceof Error) {
                 msg = err.message;
             }
-            setEmailSent(false);
             setMessage(msg);
-        } finally {
-            setLoading(false);
         }
     }
 
