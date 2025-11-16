@@ -1,14 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { buildPath } from '../utils/Path';
 
 // Configure axios defaults for this component
 axios.defaults.withCredentials = true;
-
-type ViewCarProps = {
-    carId?: string;
-};
 
 type Car = {
     _id: string;
