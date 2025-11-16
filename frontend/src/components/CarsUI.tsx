@@ -54,7 +54,6 @@ function CarsUI() {
             const response = await axios.get(buildPath('api/car'));
             if (response.data.success) {
                 setAllCars(response.data.cars);
-                console.log(response);
                 setCars(response.data.cars); // show all cars
             } else {
                 setError('Failed to load cars');
@@ -200,38 +199,11 @@ function CarsUI() {
                         </div>
                     </div>
                     <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-2xl font-bold">Your Cars (JUST FOR TESTING)</h2>
+                        <h2 className="text-2xl font-bold">Your Cars</h2>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {cars.map(car => (
                             <CarCard key={car._id} onDelete={handleCarDeleted} car={car}  />
-                            // <div key={car._id} className="relative bg-white rounded-lg shadow-md p-4">
-                            //     <div className={`absolute -right-2 -top-2 h-6 w-10 rounded-full grid place-items-center ${
-                            //         car.rentalStatus === 'available' ? 'bg-green-600' :
-                            //         car.rentalStatus === 'rented' ? 'bg-red-500' :
-                            //         'bg-yellow-500'
-                            //         }`}>
-                            //             <img src={
-                            //                 car.rentalStatus === 'available' ? AvailableIcon : 
-                            //                 car.rentalStatus === 'rented' ? RentedIcon :
-                            //                 MaintenanceIcon} className="invert h-5 w-5"></img>
-                            //         </div>
-                            //     <h3 className="text-xl font-semibold mb-2">{car.year} {car.make} {car.model}</h3>
-                            //     <div className="space-y-2">
-                            //         <p><span className="font-medium">Color:</span> {car.color}</p>
-                            //         <p><span className="font-medium">License Plate:</span> {car.licensePlate}</p>
-                            //         <p><span className="font-medium">Status:</span> {car.rentalStatus}</p>
-                            //         <p><span className="font-medium">Type:</span> {car.carType}</p>
-                            //         <p><span className="font-medium">Company:</span> {car.companyName}</p>
-                            //     </div>
-                            //     <div className="mt-4 flex gap-2">
-                            //         <button 
-                            //             onClick={() => navigate(`/cars/${car._id.toString()}`)}
-                            //             className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-3 rounded text-sm">
-                            //             Edit
-                            //         </button>
-                            //     </div>
-                            // </div>
                         ))}
                     </div>
                 </>

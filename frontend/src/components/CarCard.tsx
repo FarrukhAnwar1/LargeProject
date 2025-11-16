@@ -122,7 +122,7 @@ const CarCard = ({car, onDelete} : CarCardProps) => {
                         </svg>
                     </div>
                     <div className="absolute right-0 mt-0 w-48 bg-gray-50 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
-                        <div onClick={() => navigate(`/cars/${car._id}`)} className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-200 cursor-pointer">View Data</div>
+                        <div onClick={() => navigate(`/cars/view/${car._id}`)} className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-200 cursor-pointer">View Data</div>
                         <div className="border-t mx-2 border-gray-300"></div>
                         <div onClick={() => navigate(`/cars/${car._id.toString()}`)} className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-200 cursor-pointer">Edit Data</div>
                         <div onClick={() => {if(confirm('Delete this car?')) { doDelete() }}} className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 cursor-pointer">Delete</div>
