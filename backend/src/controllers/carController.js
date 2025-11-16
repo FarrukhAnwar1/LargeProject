@@ -232,12 +232,18 @@ export const getCars = async (req, res) => {
             query.companyName = user.companyName;
         }
 
-        //If we want to add filtering in our searches:
-        if (req.query.rentalStatus) query.rentalStatus = req.query.rentalStatus;
-        if (req.query.carType) query.carType = req.query.carType;
-        if (req.query.make) query.make = req.query.make;
-        if (req.query.model) query.model = req.query.model;
-        if (req.query.year) query.year = Number(req.query.year);
+        // Apply filters from query parameters
+        const filterFields = ['make', 'model', 'carType', 'rentalStatus'];
+        filterFields.forEach(field => {
+            if (req.query[field]) {
+                query[field] = req.query[field];
+            }
+        });
+        
+        // Handle year separately since it needs to be converted to a number
+        if (req.query.year) {
+            query.year = Number(req.query.year);
+        }
 
         const cars = await Car.find(query);
 

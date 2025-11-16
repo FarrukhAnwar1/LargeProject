@@ -4,7 +4,6 @@ import CarsUI from '../components/CarsUI';
 const CarsPage = () => {
     return (
         <div>
-            <PageTitle />
             <LoggedInName />
             <CarsUI />
         </div>

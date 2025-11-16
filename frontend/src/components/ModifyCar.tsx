@@ -159,9 +159,7 @@ const ModifyCar = ({ carId }: ModifyCarProps) => {
 
                     // Get rental info from GET /api/rental/:carID
                     try {
-                        console.log('Fetching rental for car ID:', carId); // Debug log
                         const rentRes = await axios.get(buildPath(`api/rental/${carId}`));
-                        console.log('Rental response:', rentRes.data); // Debug log
 
                         const rentals = rentRes.data?.rentals;
                         // Get the most recent rental
