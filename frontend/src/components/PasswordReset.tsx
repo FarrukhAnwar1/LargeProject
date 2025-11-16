@@ -13,7 +13,7 @@ function PasswordReset() {
     <div>
         <Card>
             <div className='text-center'>
-                <strong className='text-2xl font-bold'>Forgot Password</strong>
+                <strong className='text-2xl font-bold'>Reset Password</strong>
             </div>
 
             <div className="login-input pt-5">

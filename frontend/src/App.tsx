@@ -6,6 +6,7 @@ import VerificationPage from './pages/VerificationPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import ModifyCarPage from './pages/ModifyCarPage';
 import SignupPage from './pages/SignupPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
 function App() {
     return (
         <div>
@@ -18,7 +19,8 @@ function App() {
                     <Route path="/cars/:carId" element={<ModifyCarPage />} />
                     <Route path="/verify/:verificationToken" element={<VerificationPage />} />
                     <Route path="/verify/:verificationToken/:type" element={<VerificationPage />} />
-                    <Route path="/reset" element={<ResetPasswordPage />} />
+                    <Route path="/reset-password" element={<ForgotPasswordPage />} />
+                    <Route path="/reset-password/:passwordToken" element={<ResetPasswordPage />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
             </Router>

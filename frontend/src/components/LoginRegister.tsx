@@ -52,8 +52,9 @@ function LoginRegister() {
         navigate('/register');
     };
 
-    const sendPasswordReset = (event: React.MouseEvent<HTMLAnchorElement>) => {
-        setMessage("Debug: Send Password Reset Link to Email");
+    const goToForgotPassword = (event: React.MouseEvent<HTMLAnchorElement>) => {
+        event.preventDefault();
+        navigate('/reset-password');;
     };
 
 
@@ -93,7 +94,7 @@ function LoginRegister() {
             </div>
 
             <div className='text-right mt-1.5'>
-                <a href={"#"} onClick={sendPasswordReset} className='font-medium text-[var(--primary)] hover:underline'>Forgot Password?</a>
+                <a href={"#"} onClick={goToForgotPassword} className='font-medium text-[var(--primary)] hover:underline'>Forgot Password?</a>
             </div>
 
             <div className='pt-10'>
