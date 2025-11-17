@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import axios from 'axios';
 import { buildPath } from '../utils/Path';
 import { Card } from "react-bootstrap";
@@ -18,6 +18,13 @@ function PasswordReset({passwordResetToken} : PasswordResetProps) {
     const redirectIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
     const navigate = useNavigate();
+
+    useEffect(() => {
+        return () => {
+            if (redirectIntervalRef.current) clearInterval(redirectIntervalRef.current);
+        };
+    }, []);
+
     const goToLogin = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         navigate('/');
