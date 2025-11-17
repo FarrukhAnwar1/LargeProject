@@ -1,8 +1,11 @@
+import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import TireTreadImage from '../resources/pictures/tire_tread.jpeg';
 import PasswordReset from "../components/PasswordReset.tsx";
 
 const ResetPasswordPage = () => {
+
+    const { passwordResetToken } = useParams<{ passwordResetToken: string }>();
 
     useEffect(() => {
         const html = document.documentElement;
@@ -32,9 +35,9 @@ const ResetPasswordPage = () => {
     }, []);
 
     return (
-        <main>
-            <PasswordReset/>
-        </main>
+            <PasswordReset
+            passwordResetToken = {passwordResetToken}
+            />
     );
 }
 export default ResetPasswordPage;

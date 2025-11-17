@@ -22,7 +22,7 @@ function App() {
                     <Route path="/verify/:verificationToken" element={<VerificationPage />} />
                     <Route path="/verify/:verificationToken/:type" element={<VerificationPage />} />
                     <Route path="/reset-password" element={<ForgotPasswordPage />} />
-                    <Route path="/reset-password/:passwordToken" element={<ResetPasswordPage />} />
+                    <Route path="/reset-password/:passwordResetToken" element={<ResetPasswordPage />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
             </Router>
