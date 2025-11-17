@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { buildPath } from '../utils/Path';
+import CarbonFiberImage from '../resources/pictures/carbon_fiber.jpeg';
 
 // Configure axios defaults for this component
 axios.defaults.withCredentials = true;
@@ -42,16 +43,16 @@ const ViewCar = () => {
         html.style.overflowX = "hidden";
         html.style.overscrollBehavior = "none";
 
-        // body.style.backgroundImage = `url(${TireTreadImage})`;
-        // body.style.backgroundRepeat = "repeat";
-        // body.style.backgroundSize = "cover";
-        // body.style.backgroundPosition = "center";
-        // body.style.backgroundColor = "var(--muted3)";
-        // body.style.backgroundBlendMode = "multiply";
+        body.style.backgroundImage = `url(${CarbonFiberImage})`;
+        body.style.backgroundRepeat = "repeat";
+        body.style.backgroundSize = "cover";
+        body.style.backgroundPosition = "center";
+        body.style.backgroundColor = "var(--muted3)";
+        body.style.backgroundBlendMode = "multiply";
         body.style.overflowX = "hidden";
         body.style.minHeight = "100vh";
         body.style.margin = "0";
-        // body.style.backgroundAttachment = "fixed";
+        body.style.backgroundAttachment = "fixed";
 
         // Cleanup on unmount
         return () => {
