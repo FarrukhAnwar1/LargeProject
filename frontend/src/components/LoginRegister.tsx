@@ -136,7 +136,7 @@ function LoginRegister() {
                     <p className='font-medium text-center mb-2'>On mobile?</p>
                     <button
                         className='w-full bg-linear-65 from-[var(--muted2)] to-[var(--muted)]'
-                        onClick={() => window.open('https://drive.google.com/drive/folders/1qNT9l-qq3Bt2LJlFM_ufYQ1XsjS6vdxv', '_blank')}
+                        onClick={() => window.open('https://github.com/chrisgw4/CarStax-App', '_blank')}
                     >
                         Download the App
                     </button>
